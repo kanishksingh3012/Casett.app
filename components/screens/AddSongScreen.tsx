@@ -15,24 +15,13 @@ interface AddSongScreenProps {
   onNext: () => void;
 }
 
-const GRADS: [string, string][] = [
-  ["#7b5cff", "#2a1a6a"], ["#ff8f6a", "#7a2a1a"], ["#3ec8a0", "#114a39"],
-  ["#6aa9ff", "#16315a"], ["#ff6aa9", "#5a1a3a"], ["#f2b850", "#6a4a14"],
-  ["#9b59b6", "#4a1a7a"], ["#2ecc71", "#1a5a3a"],
-];
-
-function gradFor(s: string): [string, string] {
-  let h = 0;
-  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) & 0xffff;
-  return GRADS[h % GRADS.length];
-}
-
 export default function AddSongScreen({ tape, set, onBack, onNext }: AddSongScreenProps) {
   const [q, setQ] = useState("");
   const [sel, setSel] = useState<Song | null>(tape.song || null);
   const [playing, setPlaying] = useState<number | null>(null);
   const [results, setResults] = useState<Song[]>(SONGS);
   const [loading, setLoading] = useState(false);
+  const [noCredentials, setNoCredentials] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -50,22 +39,21 @@ export default function AddSongScreen({ tape, set, onBack, onNext }: AddSongScre
     }
     setLoading(true);
     try {
-      const res = await fetch(
-        `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=25`
-      );
+      const res = await fetch(`/api/spotify/search?q=${encodeURIComponent(query)}`);
       const data = await res.json();
-      const mapped: Song[] = (data.results || []).map((r: Record<string, string>) => {
-        const [a, b] = gradFor(r.trackName);
-        return {
-          title: r.trackName,
-          artist: r.artistName,
-          a,
-          b,
-          previewUrl: r.previewUrl || undefined,
-          artworkUrl: r.artworkUrl100 ? r.artworkUrl100.replace("100x100", "60x60") : undefined,
-        };
-      });
-      setResults(mapped);
+
+      if (data.error === "missing_credentials") {
+        setNoCredentials(true);
+        setResults(
+          SONGS.filter((s) =>
+            (s.title + s.artist).toLowerCase().includes(query.toLowerCase())
+          )
+        );
+        return;
+      }
+
+      setNoCredentials(false);
+      setResults(data.results || []);
     } catch {
       setResults(
         SONGS.filter((s) =>
@@ -118,13 +106,28 @@ export default function AddSongScreen({ tape, set, onBack, onNext }: AddSongScre
           />
           {loading && (
             <span style={{
-              position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)",
-              width: 14, height: 14, border: "2px solid rgba(255,255,255,.15)",
-              borderTopColor: "#E8A030", borderRadius: "50%",
+              position: "absolute", right: 14, top: "50%",
+              transform: "translateY(-50%)",
+              width: 14, height: 14,
+              border: "2px solid rgba(255,255,255,.15)",
+              borderTopColor: "#1DB954",
+              borderRadius: "50%",
               animation: "spin 0.7s linear infinite",
+              display: "inline-block",
             }} />
           )}
         </div>
+
+        {noCredentials && (
+          <div style={{
+            margin: "0 0 8px", padding: "8px 12px",
+            background: "rgba(255,69,58,.12)", borderRadius: 8,
+            fontSize: 11, color: "#FF453A", lineHeight: 1.5,
+          }}>
+            Add <strong>SPOTIFY_CLIENT_ID</strong> &amp; <strong>SPOTIFY_CLIENT_SECRET</strong> to <code>.env.local</code> for full Spotify search.
+          </div>
+        )}
+
         <div className="song-list">
           {list.length === 0 && !loading && (
             <div style={{ textAlign: "center", opacity: 0.4, padding: "24px 0", fontSize: 13 }}>
@@ -159,7 +162,7 @@ export default function AddSongScreen({ tape, set, onBack, onNext }: AddSongScre
                   <div className="t">{s.title}</div>
                   <div className="a">
                     {s.artist}
-                    {hasPreview ? " · 0:30 preview" : ""}
+                    {hasPreview ? " · preview" : ""}
                   </div>
                   {playing === i && (
                     <div className="mini-bar"><i /></div>
