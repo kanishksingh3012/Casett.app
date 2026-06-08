@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { Tape, Song } from "@/lib/types";
 import { SONGS } from "@/lib/data";
 import StatusBar from "@/components/ui/StatusBar";
@@ -15,14 +15,94 @@ interface AddSongScreenProps {
   onNext: () => void;
 }
 
+const GRADS: [string, string][] = [
+  ["#7b5cff", "#2a1a6a"], ["#ff8f6a", "#7a2a1a"], ["#3ec8a0", "#114a39"],
+  ["#6aa9ff", "#16315a"], ["#ff6aa9", "#5a1a3a"], ["#f2b850", "#6a4a14"],
+  ["#9b59b6", "#4a1a7a"], ["#2ecc71", "#1a5a3a"],
+];
+
+function gradFor(s: string): [string, string] {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) & 0xffff;
+  return GRADS[h % GRADS.length];
+}
+
 export default function AddSongScreen({ tape, set, onBack, onNext }: AddSongScreenProps) {
   const [q, setQ] = useState("");
   const [sel, setSel] = useState<Song | null>(tape.song || null);
   const [playing, setPlaying] = useState<number | null>(null);
+  const [results, setResults] = useState<Song[]>(SONGS);
+  const [loading, setLoading] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const list = SONGS.filter((s) =>
-    (s.title + s.artist).toLowerCase().includes(q.toLowerCase())
-  );
+  useEffect(() => {
+    return () => {
+      audioRef.current?.pause();
+    };
+  }, []);
+
+  const search = async (query: string) => {
+    if (query.trim().length < 2) {
+      setResults(SONGS);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=25`
+      );
+      const data = await res.json();
+      const mapped: Song[] = (data.results || []).map((r: Record<string, string>) => {
+        const [a, b] = gradFor(r.trackName);
+        return {
+          title: r.trackName,
+          artist: r.artistName,
+          a,
+          b,
+          previewUrl: r.previewUrl || undefined,
+          artworkUrl: r.artworkUrl100 ? r.artworkUrl100.replace("100x100", "60x60") : undefined,
+        };
+      });
+      setResults(mapped);
+    } catch {
+      setResults(
+        SONGS.filter((s) =>
+          (s.title + s.artist).toLowerCase().includes(query.toLowerCase())
+        )
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleQ = (val: string) => {
+    setQ(val);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => search(val), 400);
+  };
+
+  const togglePlay = (i: number, song: Song) => {
+    if (!song.previewUrl) return;
+    if (playing === i) {
+      audioRef.current?.pause();
+      setPlaying(null);
+      return;
+    }
+    if (audioRef.current) audioRef.current.pause();
+    const audio = new Audio(song.previewUrl);
+    audio.onended = () => setPlaying(null);
+    audio.play();
+    audioRef.current = audio;
+    setPlaying(i);
+  };
+
+  const list = q.trim().length < 2
+    ? SONGS.filter((s) =>
+        (s.title + s.artist).toLowerCase().includes(q.toLowerCase())
+      )
+    : results;
 
   return (
     <div className="screen">
@@ -30,41 +110,59 @@ export default function AddSongScreen({ tape, set, onBack, onNext }: AddSongScre
       <TopBar onBack={onBack} title="Side B · One Song" step="3 / 5" />
       <div className="screen-body">
         <Stepper step={1} />
-        <div className="field search">
+        <div className="field search" style={{ position: "relative" }}>
           <input
             value={q}
-            placeholder="Search a song…"
-            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search any song…"
+            onChange={(e) => handleQ(e.target.value)}
           />
+          {loading && (
+            <span style={{
+              position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)",
+              width: 14, height: 14, border: "2px solid rgba(255,255,255,.15)",
+              borderTopColor: "#E8A030", borderRadius: "50%",
+              animation: "spin 0.7s linear infinite",
+            }} />
+          )}
         </div>
         <div className="song-list">
+          {list.length === 0 && !loading && (
+            <div style={{ textAlign: "center", opacity: 0.4, padding: "24px 0", fontSize: 13 }}>
+              No results
+            </div>
+          )}
           {list.map((s, i) => {
-            const on = sel && sel.title === s.title;
+            const on = !!(sel && sel.title === s.title && sel.artist === s.artist);
+            const hasPreview = !!s.previewUrl;
             return (
               <div
-                key={i}
+                key={`${s.title}-${s.artist}-${i}`}
                 className={`song-row${on ? " on" : ""}`}
                 onClick={() => setSel(s)}
               >
                 <button
                   className="song-art"
-                  style={{
-                    background: `linear-gradient(135deg,${s.a},${s.b})`,
-                  }}
+                  style={
+                    s.artworkUrl
+                      ? { backgroundImage: `url(${s.artworkUrl})`, backgroundSize: "cover", backgroundPosition: "center" }
+                      : { background: `linear-gradient(135deg,${s.a},${s.b})` }
+                  }
                   onClick={(e) => {
                     e.stopPropagation();
-                    setPlaying(playing === i ? null : i);
+                    togglePlay(i, s);
                   }}
+                  disabled={!hasPreview}
                 >
-                  {playing === i ? ICON.pause : ICON.play}
+                  {hasPreview && (playing === i ? ICON.pause : ICON.play)}
                 </button>
                 <div className="song-info">
                   <div className="t">{s.title}</div>
-                  <div className="a">{s.artist} · 0:30 preview</div>
+                  <div className="a">
+                    {s.artist}
+                    {hasPreview ? " · 0:30 preview" : ""}
+                  </div>
                   {playing === i && (
-                    <div className="mini-bar">
-                      <i />
-                    </div>
+                    <div className="mini-bar"><i /></div>
                   )}
                 </div>
                 <span className={`song-pick${on ? " on" : ""}`}>
@@ -80,6 +178,7 @@ export default function AddSongScreen({ tape, set, onBack, onNext }: AddSongScre
           className="cta"
           disabled={!sel}
           onClick={() => {
+            audioRef.current?.pause();
             set({ song: sel });
             onNext();
           }}

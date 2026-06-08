@@ -305,6 +305,7 @@ button {
 .lcd .rd { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,69,58,.4); }
 .lcd .rd.on { background: var(--rec); box-shadow: 0 0 8px var(--rec); animation: blink 1s infinite; }
 @keyframes blink { 50% { opacity: .3; } }
+@keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
 .lcd .meta { font-family: var(--font-mono); font-size: 9px; letter-spacing: .18em; color: rgba(127,224,168,.4); }
 
 /* waveform */

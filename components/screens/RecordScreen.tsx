@@ -22,43 +22,108 @@ const mmss = (s: number) =>
 
 export default function RecordScreen({ tape, set, onBack, onNext }: RecordScreenProps) {
   const [rec, setRec] = useState(false);
-  const [done, setDone] = useState(tape.hasVoice || false);
+  const [done, setDone] = useState(tape.hasVoice && !!tape.voiceUrl);
   const [t, setT] = useState(tape.voiceLen || 0);
-  const ref = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [playing, setPlaying] = useState(false);
+  const [err, setErr] = useState("");
+
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const mrRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const blobUrlRef = useRef<string>(tape.voiceUrl || "");
 
   useEffect(() => {
-    if (rec) {
-      ref.current = setInterval(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      if (mrRef.current && mrRef.current.state !== "inactive") mrRef.current.stop();
+      if (audioRef.current) audioRef.current.pause();
+    };
+  }, []);
+
+  const startRec = async () => {
+    setErr("");
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      chunksRef.current = [];
+      const mr = new MediaRecorder(stream);
+      mrRef.current = mr;
+
+      mr.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
+
+      mr.onstop = () => {
+        stream.getTracks().forEach((tr) => tr.stop());
+        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current);
+        blobUrlRef.current = URL.createObjectURL(blob);
+        audioRef.current = null;
+        setDone(true);
+        setRec(false);
+      };
+
+      mr.start();
+      setT(0);
+      setRec(true);
+
+      timerRef.current = setInterval(() => {
         setT((x) => {
           if (x >= 90) {
-            if (ref.current) clearInterval(ref.current);
-            setRec(false);
-            setDone(true);
+            if (mrRef.current && mrRef.current.state !== "inactive") mrRef.current.stop();
+            if (timerRef.current) clearInterval(timerRef.current);
             return 90;
           }
           return x + 1;
         });
       }, 1000);
-    } else {
-      if (ref.current) clearInterval(ref.current);
+    } catch {
+      setErr("Microphone access denied — please allow mic in your browser.");
     }
-    return () => {
-      if (ref.current) clearInterval(ref.current);
-    };
-  }, [rec]);
+  };
+
+  const stopRec = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (mrRef.current && mrRef.current.state !== "inactive") mrRef.current.stop();
+  };
 
   const toggle = () => {
-    if (done) return;
     if (rec) {
-      setRec(false);
-      setDone(true);
+      stopRec();
     } else {
-      setRec(true);
+      startRec();
+    }
+  };
+
+  const reRecord = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    setDone(false);
+    setRec(false);
+    setT(0);
+    setPlaying(false);
+    setErr("");
+  };
+
+  const playback = () => {
+    if (!blobUrlRef.current) return;
+    if (playing) {
+      audioRef.current?.pause();
+      setPlaying(false);
+    } else {
+      if (!audioRef.current) {
+        audioRef.current = new Audio(blobUrlRef.current);
+        audioRef.current.onended = () => setPlaying(false);
+      }
+      audioRef.current.play();
+      setPlaying(true);
     }
   };
 
   const proceed = () => {
-    set({ hasVoice: true, voiceLen: t });
+    set({ hasVoice: done, voiceLen: t, voiceUrl: blobUrlRef.current || undefined });
     onNext();
   };
 
@@ -80,7 +145,12 @@ export default function RecordScreen({ tape, set, onBack, onNext }: RecordScreen
           side="A"
           recording={rec}
         />
-        <Waveform active={rec} />
+        <Waveform active={rec || playing} />
+        {err && (
+          <div style={{ color: "#FF453A", fontSize: 12, textAlign: "center", margin: "-4px 0 4px" }}>
+            {err}
+          </div>
+        )}
         <div className="rec-controls">
           {!done ? (
             <div className="rec-center">
@@ -95,17 +165,10 @@ export default function RecordScreen({ tape, set, onBack, onNext }: RecordScreen
           ) : (
             <div className="rec-done">
               <div className="rec-row">
-                <button
-                  className="tbtn"
-                  onClick={() => {
-                    setDone(false);
-                    setRec(false);
-                    setT(0);
-                  }}
-                >
-                  {ICON.rew}
+                <button className="tbtn" onClick={reRecord}>{ICON.rew}</button>
+                <button className={`tbtn play${playing ? " on" : ""}`} onClick={playback}>
+                  {playing ? ICON.pause : ICON.play}
                 </button>
-                <button className="tbtn play">{ICON.play}</button>
               </div>
               <span className="rec-cap">re-record · play back</span>
             </div>

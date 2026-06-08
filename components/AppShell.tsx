@@ -115,13 +115,6 @@ export default function AppShell() {
     go("home");
   };
 
-  const reset = () => {
-    try { localStorage.clear(); } catch {}
-    setLib(SEED_LIB);
-    setTape(FRESH_TAPE());
-    setScreen("home");
-  };
-
   let body: React.ReactNode = null;
 
   if (screen === "home") {
@@ -207,9 +200,6 @@ export default function AppShell() {
           </div>
         </div>
       </div>
-      <button className="reset" onClick={reset}>
-        reset demo
-      </button>
     </div>
   );
 }
