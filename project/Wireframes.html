@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cassette — Wireframes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Gaegu:wght@300;400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --w:#fff; --g1:#F0F0F0; --g2:#CCCCCC; --ink:#3a3a3a; --ink2:#777;
+    --amber:#E8A030; --line:#4a4a4a;
+    --hand:"Gaegu",cursive; --note:"Caveat",cursive; --mono:"JetBrains Mono",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--hand);background:#e9e7e1;color:var(--ink);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M0 39.5H40' stroke='%23d8d5cd' stroke-width='1'/%3E%3Cpath d='M39.5 0V40' stroke='%23d8d5cd' stroke-width='1'/%3E%3C/svg%3E");}
+  .sketch{filter:url(#sketch);}
+
+  header.top{position:sticky;top:0;z-index:50;background:#e9e7e1ee;backdrop-filter:blur(6px);
+    border-bottom:2px solid var(--line);padding:18px 30px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
+  header .h-title{font-family:var(--note);font-weight:700;font-size:34px;line-height:1;}
+  header .h-sub{font-size:15px;color:var(--ink2);max-width:40ch;}
+  .toggle{margin-left:auto;display:flex;border:2.5px solid var(--line);border-radius:40px;overflow:hidden;background:var(--w);}
+  .toggle button{font-family:var(--hand);font-weight:700;font-size:15px;padding:10px 22px;border:none;background:transparent;cursor:pointer;color:var(--ink2);}
+  .toggle button.on{background:var(--line);color:#fff;}
+
+  .variation-meta{padding:18px 30px 4px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .variation-meta .tag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    border:1.5px solid var(--line);border-radius:30px;padding:5px 12px;}
+  .variation-meta .desc{font-size:16px;color:var(--ink2);}
+
+  .strip{display:flex;gap:34px;padding:28px 40px 60px;overflow-x:auto;align-items:flex-start;}
+  .scene{flex:none;width:268px;position:relative;}
+  .scene > .cap{font-family:var(--note);font-weight:700;font-size:23px;margin-bottom:6px;display:flex;gap:8px;align-items:baseline;}
+  .scene > .cap .n{font-family:var(--mono);font-size:12px;color:var(--amber);font-weight:700;}
+  .scene > .cap .star{color:var(--amber);font-size:16px;}
+  .scene .state{font-size:13px;color:var(--ink2);margin-bottom:10px;font-style:italic;}
+
+  /* phone */
+  .frame{width:268px;height:556px;background:var(--w);border:2.5px solid var(--line);border-radius:32px;
+    position:relative;overflow:hidden;box-shadow:5px 6px 0 rgba(74,74,74,.16);}
+  .notch{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:74px;height:14px;background:var(--line);border-radius:10px;z-index:9;}
+  .status{height:34px;display:flex;align-items:center;justify-content:space-between;padding:14px 18px 0;font-family:var(--mono);font-size:11px;color:var(--ink);}
+  .status .batt{display:flex;gap:3px;align-items:center;}
+  .status .batt i{display:block;width:16px;height:9px;border:1.2px solid var(--ink);border-radius:2px;}
+  .scr{padding:8px 14px 0;height:calc(100% - 34px);position:relative;}
+
+  /* primitives */
+  .bar{background:var(--g1);border:1.5px solid var(--g2);border-radius:8px;}
+  .bar.d{background:var(--g2);}
+  .row{display:flex;gap:8px;}
+  .col{display:flex;flex-direction:column;}
+  .lbl{font-size:13px;color:var(--ink2);}
+  .h{font-family:var(--note);font-weight:700;color:var(--ink);}
+  .pill{border:2px solid var(--line);border-radius:30px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
+  .cta{background:var(--amber);border:2px solid var(--line);border-radius:30px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#3a2a10;}
+  .circle{border:2px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .dash{border:2px dashed var(--g2);border-radius:10px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--ink2);}
+
+  /* cassette skeleton */
+  .cass{border:2px solid var(--line);border-radius:10px;padding:8px;background:var(--w);}
+  .cass .hdr{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--ink2);margin-bottom:5px;padding:0 2px;}
+  .cass .hdr b{font-weight:700;color:var(--ink);}
+  .cass .lab{height:34px;border:1.5px dashed var(--g2);border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--ink2);font-family:var(--note);font-size:18px;margin-bottom:6px;background:rgba(255,255,255,.7);}
+  .cass .win{height:62px;border:2px solid var(--line);border-radius:6px;background:var(--g1);display:flex;align-items:center;justify-content:space-around;}
+  .cass .win .reel{width:38px;height:38px;border:2px solid var(--line);border-radius:50%;background:var(--w);position:relative;}
+  .cass .win .reel::after{content:"";position:absolute;inset:13px;border:2px solid var(--g2);border-radius:50%;}
+
+  /* tab bars */
+  .tab-liquid{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);width:62%;height:50px;
+    background:rgba(240,240,240,.82);border:2px solid var(--line);border-radius:30px;display:flex;align-items:center;justify-content:space-around;
+    box-shadow:0 4px 0 rgba(74,74,74,.12);backdrop-filter:blur(3px);}
+  .tab-skeuo{position:absolute;left:0;bottom:0;width:100%;height:58px;background:var(--g2);border-top:2.5px solid var(--line);
+    display:flex;align-items:center;justify-content:space-around;}
+  .tab-skeuo .key{width:50px;height:34px;background:var(--w);border:2px solid var(--line);border-radius:6px;box-shadow:0 3px 0 var(--line);}
+  .tdot{width:24px;height:24px;border:2px solid var(--line);border-radius:6px;background:var(--w);}
+  .tdot.on{background:var(--amber);}
+
+  /* post-it annotation */
+  .postit{position:absolute;z-index:30;background:#fff7d6;border:1.5px solid #d8c98a;padding:8px 11px;width:160px;
+    font-family:var(--note);font-weight:600;font-size:16px;line-height:1.12;color:#5a4a18;box-shadow:3px 4px 0 rgba(74,74,74,.16);transform:rotate(-2deg);}
+  .postit::before{content:"";position:absolute;width:30px;height:12px;background:rgba(216,201,138,.6);top:-7px;left:18px;transform:rotate(-6deg);}
+  .postit b{color:var(--amber);}
+
+  footer{padding:30px 40px 60px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink2);border-top:2px solid var(--line);margin-top:10px;}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="sketch"><feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" result="n" seed="7"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/></filter>
+</svg>
+
+<header class="top">
+  <div class="col">
+    <div class="h-title">Wireframes</div>
+    <div class="h-sub">Lo-fi · v1.1 audio-message model · 9 screens · mobile 375pt · two directions to pick from</div>
+  </div>
+  <div class="toggle" id="toggle">
+    <button data-v="liquid" class="on">Liquid Glass</button>
+    <button data-v="skeuo">Skeuomorphic</button>
+  </div>
+</header>
+
+<div class="variation-meta" id="meta"></div>
+<div class="strip sketch" id="strip"></div>
+
+<footer>Cassette · Wireframes v1.1 · personal audio-message app · Seal removed · Side A = voice / Side B = song · web-first recipient · grayscale + single accent · Jun 2026</footer>
+
+<script>
+const META = {
+  liquid: { tag:"iOS 26 · Liquid Glass", desc:"Floating translucent chrome, large rounded titles, content-forward sheets that rise over a blurred backdrop." },
+  skeuo:  { tag:"Skeuomorphic · Hardware", desc:"Tactile tape-deck framing, physical transport keys, shelf metaphors, beveled bars anchored to edges." }
+};
+
+function status(){return `<div class="status"><span>9:41</span><span class="batt">▰▰▰ <i></i></span></div>`;}
+
+// ---- shared content pieces, kind = 'liquid' | 'skeuo' ----
+function tab(kind, active){
+  if(active===null) return '';
+  if(kind==='liquid'){
+    return `<div class="tab-liquid"><span class="tdot ${active==0?'on':''}"></span><span class="tdot ${active==1?'on':''}"></span></div>`;
+  }
+  return `<div class="tab-skeuo"><span class="key" style="${active==0?'background:#E8A030':''}"></span><span class="key" style="${active==1?'background:#E8A030':''}"></span></div>`;
+}
+function title(kind, t){
+  if(kind==='liquid') return `<div class="h" style="font-size:30px;margin:6px 2px 12px">${t}</div>`;
+  return `<div class="bar d" style="margin:2px 0 12px;padding:8px 10px;border-radius:6px"><span class="h" style="font-size:20px">${t}</span></div>`;
+}
+function fab(kind){
+  return kind==='liquid'
+    ? `<div class="circle" style="position:absolute;right:18px;bottom:78px;width:58px;height:58px;background:var(--amber);font-size:28px;font-weight:700;color:#3a2a10">+</div>`
+    : `<div class="circle" style="position:absolute;right:16px;bottom:70px;width:56px;height:56px;background:var(--amber);box-shadow:0 4px 0 var(--line);font-size:26px;font-weight:700;color:#3a2a10">+</div>`;
+}
+function cass(extra, hdr, label){
+  return `<div class="cass" style="${extra||''}">
+      ${hdr?`<div class="hdr"><span>FROM · <b>ALEX</b></span><span>${hdr}</span></div>`:''}
+      <div class="lab">${label}</div>
+      <div class="win"><span class="reel"></span><span class="reel"></span></div>
+    </div>`;
+}
+
+const SCREENS = [
+  /* 0 HOME — EMPTY · one action */
+  { name:"Home", n:"01", state:"first run · one action only", pin:[
+      {t:"<b>One action.</b> No Seal, no library, no identity prompt", x:178, y:150},
+      {t:"Library appears only <b>after</b> the first tape", x:-44, y:380}
+    ],
+    render:(k)=>`
+      <div style="height:88%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px">
+        <div class="circle" style="width:100px;height:100px;background:var(--amber);${k==='skeuo'?'box-shadow:0 5px 0 var(--line)':''};font-size:48px;font-weight:700;color:#3a2a10">+</div>
+        <div class="h" style="font-size:24px">Make a tape</div>
+        <div class="lbl" style="text-align:center;max-width:180px">record your voice, add one song, send it</div>
+      </div>`
+  },
+  /* 1 HOME — FILLED */
+  { name:"Home", n:"01", state:"after first tape · Library now present", pin:[
+      {t:"(+) stays the <b>hero</b>. List = sent &amp; received together", x:178, y:80}
+    ],
+    render:(k)=>`
+      ${k==='liquid'?`<div class="h" style="font-size:30px;margin:6px 2px 12px">Your tapes</div>`:`<div class="bar d" style="margin:2px 0 12px;padding:7px 10px;border-radius:6px"><span class="h" style="font-size:20px">Your tapes</span></div>`}
+      <div class="lbl" style="margin:2px 2px 6px">Recent · sent &amp; received</div>
+      ${[['→ to Maya','sent'],['from Dad','received']].map(([t,tg])=>`<div class="bar" style="height:72px;margin-bottom:10px;display:flex;gap:10px;padding:8px;align-items:center">
+        <div class="cass" style="width:80px;padding:5px"><div class="win" style="height:30px"><span class="reel" style="width:18px;height:18px"></span><span class="reel" style="width:18px;height:18px"></span></div></div>
+        <div class="col" style="gap:6px;flex:1"><div class="bar d" style="height:13px;width:78%"></div><div class="lbl" style="font-size:12px">${t} · ${tg}</div></div>
+      </div>`).join('')}
+      ${fab(k)}
+      ${tab(k,0)}`
+  },
+  /* 2 NEW TAPE */
+  { name:"New tape", n:"02", state:"title (4–5 words) · who it's from", pin:[
+      {t:"Title is a <b>name</b>, not a letter — 4–5 words max", x:178, y:140},
+      {t:"Sender name sits in the <b>header</b> (no Seal system)", x:-46, y:300}
+    ],
+    render:(k)=>`
+      ${k==='liquid'?title(k,'New tape'):`<div class="bar d" style="margin:2px 0 12px;padding:8px 10px;border-radius:6px"><span class="h" style="font-size:20px">New tape</span></div>`}
+      ${cass(k==='skeuo'?'border-width:3px;box-shadow:0 4px 0 var(--line);margin-bottom:14px':'margin-bottom:14px','HI-FI','thinking of you lately')}
+      <div class="bar" style="height:42px;border-radius:${k==='liquid'?'30px':'8px'};display:flex;align-items:center;padding:0 14px;margin-bottom:10px;color:var(--ink)">who's it from? <span style="color:var(--ink2);margin-left:6px">Alex</span></div>
+      <div class="cta" style="height:48px">Next · record Side A ▸</div>
+      ${tab(k,null)}`
+  },
+  /* 3 RECORD VOICE NOTE — Side A */
+  { name:"Record · Side A", n:"03", state:"your voice · hard cap 0:90", pin:[
+      {t:"<b>Side A = your voice.</b> 90s hard cap, enforced in UI", x:178, y:110},
+      {t:"Waveform + countdown · re-record before continuing", x:-48, y:330}
+    ],
+    render:(k)=>`
+      ${k==='liquid'?title(k,'Side A · your voice'):`<div class="bar d" style="margin:2px 0 12px;padding:8px 10px;border-radius:6px"><span class="h" style="font-size:18px">Side A · your voice</span></div>`}
+      <div class="dash" style="height:70px;margin-bottom:10px;align-items:center;gap:3px">
+        ${[10,22,16,30,18,26,12,28,14,24,16,30,20,12,26,18].map(h=>`<span style="display:inline-block;width:4px;height:${h}px;background:var(--g2);border-radius:2px"></span>`).join('')}
+      </div>
+      <div style="text-align:center;font-family:var(--mono);font-size:14px;color:var(--ink2);margin-bottom:14px">0:18 / 1:30</div>
+      <div class="col" style="align-items:center;gap:5px;margin-bottom:12px"><span class="circle" style="width:66px;height:66px;background:#DC2626;color:#fff;font-size:24px;${k==='skeuo'?'box-shadow:0 4px 0 var(--line)':''}">●</span><span class="lbl" style="font-size:12px">record</span></div>
+      <div class="row" style="justify-content:center;gap:28px;margin-bottom:14px"><span class="lbl">↺ re-record</span><span class="lbl">▶ play</span></div>
+      <div class="cta" style="height:46px">Next · add a song ▸</div>
+      ${tab(k,null)}`
+  },
+  /* 4 ATTACH SONG — Side B */
+  { name:"Add song · Side B", n:"04", state:"one song · 30s Spotify preview", pin:[
+      {t:"<b>Side B = one song.</b> Spotify preview_url — 30s, no login either side", x:172, y:90},
+      {t:"Pick exactly <b>one</b> — the feeling, not a playlist", x:-50, y:320}
+    ],
+    render:(k)=>`
+      ${k==='liquid'?title(k,'Side B · one song'):`<div class="bar d" style="margin:2px 0 12px;padding:8px 10px;border-radius:6px"><span class="h" style="font-size:18px">Side B · one song</span></div>`}
+      <div class="bar" style="height:40px;border-radius:30px;display:flex;align-items:center;padding:0 14px;margin-bottom:12px;color:var(--ink2)">⌕ &nbsp;search a song…</div>
+      ${[0,1,2].map(i=>`<div class="row" style="align-items:center;gap:9px;margin-bottom:10px;${i==0?'background:var(--g1);border:1.5px solid var(--amber);border-radius:8px;padding:6px':'padding:0 6px'}">
+        <div class="bar d" style="width:38px;height:38px;border-radius:6px"></div>
+        <div class="col" style="flex:1;gap:5px"><div class="bar" style="height:12px;width:70%"></div><div class="lbl" style="font-size:11px">artist · 0:30 preview</div></div>
+        <span class="lbl">${i==0?'✓':'▶'}</span>
+      </div>`).join('')}
+      <div class="cta" style="height:46px;margin-top:4px">Next · customize ▸</div>
+      ${tab(k,null)}`
+  },
+  /* 5 CUSTOMIZE — shell only */
+  { name:"Customize", n:"05", state:"shell + material only", pin:[
+      {t:"Shell color + material only. <b>Notes/tracklist removed</b>; stickers TBD", x:178, y:96}
+    ],
+    render:(k)=>`
+      ${title(k,'Customize')}
+      ${cass(k==='skeuo'?'box-shadow:0 4px 0 var(--line);margin-bottom:14px':'margin-bottom:14px','HI-FI','thinking of you lately')}
+      <div class="lbl" style="margin:2px 2px 6px">Shell color</div>
+      <div class="row" style="gap:9px;margin-bottom:12px">${['#3a2c1f','#E8A030','#CCCCCC','#7BA68A','#fff'].map((c,i)=>`<span class="circle" style="width:36px;height:36px;background:${c};${i==1?'box-shadow:0 0 0 3px rgba(232,160,48,.4)':''}"></span>`).join('')}</div>
+      <div class="lbl" style="margin:2px 2px 6px">Material</div>
+      <div class="row" style="gap:8px">${['clear','smoky','amber'].map((t,i)=>`<span class="${i==2?'cta':'pill'}" style="flex:1;height:40px;font-size:13px">${t}</span>`).join('')}</div>
+      <div class="cta" style="height:46px;margin-top:14px">Next · share ▸</div>
+      ${tab(k,null)}`
+  },
+  /* 6 SHARE + SAVE */
+  { name:"Share + Save", n:"06", state:"web link · always works", pin:[
+      {t:"Link <b>always opens a web player</b> — no app gate", x:178, y:90},
+      {t:"Save to your Library (the keepsake shelf)", x:-46, y:360}
+    ],
+    render:(k)=>`
+      ${k==='liquid'?title(k,'Ready to send'):`<div class="bar d" style="margin:2px 0 12px;padding:8px 10px;border-radius:6px"><span class="h" style="font-size:20px">Ready to send</span></div>`}
+      ${cass(k==='skeuo'?'box-shadow:0 4px 0 var(--line);margin-bottom:14px':'margin-bottom:14px','SIDE A · B','thinking of you lately')}
+      <div class="bar" style="height:42px;border-radius:${k==='liquid'?'30px':'8px'};display:flex;align-items:center;justify-content:space-between;padding:0 14px;margin-bottom:10px;color:var(--ink2)">tape.fm/t/9x4k <span class="lbl">⧉ copy</span></div>
+      <div class="row" style="gap:10px"><div class="cta" style="height:48px;flex:1">Share</div><div class="pill" style="height:48px;flex:1">Save</div></div>
+      ${tab(k,null)}`
+  },
+  /* 7 RECIPIENT WEB PLAYER ★ */
+  { name:"Web Player", n:"07", star:true, state:"web-first · the #1 screen", pin:[
+      {t:"<b>Most-seen screen.</b> Opens in browser — no download wall", x:178, y:64},
+      {t:"Side A (voice) → tap cassette to <b>flip</b> → Side B (song). Pulsing edge hints it", x:172, y:340},
+      {t:"Dismissible Smart App Banner — <b>never</b> blocks play", x:-52, y:150}
+    ],
+    render:(k)=>`
+      <div class="bar d" style="height:24px;border-radius:6px;display:flex;align-items:center;padding:0 8px;font-family:var(--mono);font-size:9px;color:var(--ink);margin-bottom:6px">🔒 tape.fm/t/9x4k</div>
+      <div class="bar" style="height:24px;border-radius:6px;display:flex;align-items:center;justify-content:space-between;padding:0 8px;margin-bottom:10px;font-size:11px;color:var(--ink2)"><span>▢ Get the app</span><span>✕</span></div>
+      <div class="cass" style="${k==='skeuo'?'box-shadow:0 4px 0 var(--line);':''}margin-bottom:12px;outline:2px solid var(--amber);outline-offset:2px">
+        <div class="hdr"><span>FROM · <b>ALEX</b></span><span>SIDE A ▸ flip</span></div>
+        <div class="lab" style="font-size:16px">thinking of you lately</div>
+        <div class="win"><span class="reel"></span><span class="reel"></span></div>
+      </div>
+      <div class="row" style="justify-content:center;gap:18px;align-items:center">
+        <div class="col" style="align-items:center;gap:3px"><span class="pill" style="width:40px;height:40px;border-radius:50%">↩</span><span class="lbl" style="font-size:11px">back</span></div>
+        <div class="col" style="align-items:center;gap:3px"><span class="circle" style="width:56px;height:56px;background:var(--amber)">▶</span><span class="lbl" style="font-size:11px">play</span></div>
+        <div class="col" style="align-items:center;gap:3px"><span class="pill" style="width:40px;height:40px;border-radius:50%">⟳</span><span class="lbl" style="font-size:11px">flip</span></div>
+      </div>
+      ${tab(k,null)}`
+  },
+  /* 8 LIBRARY */
+  { name:"Library", n:"08", state:"sent + received · sync banner", pin:[
+      {t:"Unified keepsake shelf — <b>sent + received</b> together", x:178, y:96},
+      {t:"Saving a <b>received</b> tape = the prompt to get the app", x:-50, y:320}
+    ],
+    render:(k)=>`
+      ${k==='liquid'?title(k,'Library'):`<div class="bar d" style="margin:2px 0 12px;padding:8px 10px;border-radius:6px"><span class="h" style="font-size:20px">Library</span></div>`}
+      <div class="bar" style="height:32px;border-radius:8px;display:flex;align-items:center;padding:0 10px;margin-bottom:10px;font-size:12px;color:#5a4a18;background:#fff7d6;border-color:#d8c98a">⟲ Sign in to sync across devices</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        ${[['→ Maya','sent'],['from Dad','rcvd'],['→ Sam','sent'],['from Jo','rcvd']].map(([t,tg])=>`<div class="cass" style="padding:6px;${k==='skeuo'?'box-shadow:0 3px 0 var(--line)':''}">
+          <div class="lab" style="height:18px;font-size:12px">${t}</div>
+          <div class="win" style="height:34px"><span class="reel" style="width:20px;height:20px"></span><span class="reel" style="width:20px;height:20px"></span></div>
+          <div class="lbl" style="font-size:10px;text-align:right;margin-top:2px">${tg}</div>
+        </div>`).join('')}
+      </div>
+      ${tab(k,1)}`
+  }
+];
+
+function build(kind){
+  document.getElementById('meta').innerHTML =
+    `<span class="tag">${META[kind].tag}</span><span class="desc">${META[kind].desc}</span>`;
+  const strip = document.getElementById('strip');
+  strip.innerHTML = SCREENS.map(s=>`
+    <div class="scene">
+      <div class="cap"><span class="n">${s.n}</span>${s.name}${s.star?'<span class="star">★</span>':''}</div>
+      <div class="state">${s.state}</div>
+      <div class="frame">
+        <div class="notch"></div>
+        ${status()}
+        <div class="scr">${s.render(kind)}</div>
+      </div>
+      ${s.pin.map(p=>`<div class="postit" style="left:${p.x}px;top:${p.y}px">${p.t}</div>`).join('')}
+    </div>`).join('');
+}
+
+document.getElementById('toggle').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  [...document.querySelectorAll('#toggle button')].forEach(x=>x.classList.toggle('on', x===b));
+  build(b.dataset.v);
+});
+build('liquid');
+</script>
+</body>
+</html>

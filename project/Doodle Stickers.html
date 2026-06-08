@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cassette — Doodle Stickers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Reenie+Beanie&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0B0B0C;--t1:#F4F4F2;--t2:#9A9AA0;--t3:#65656B;--hair:rgba(255,255,255,.08);
+    --amber:#E8A030;--ink:#2747c4;--ui:"Space Grotesk",sans-serif;--body:"DM Sans",sans-serif;
+    --mono:"JetBrains Mono",monospace;--hand:"Reenie Beanie",cursive;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:radial-gradient(120% 70% at 80% -5%, rgba(232,160,48,.06), transparent 55%),#08080a;
+    color:var(--t1);font-family:var(--body);min-height:100vh;padding:54px 40px 80px;}
+  header{max-width:1180px;margin:0 auto 44px;}
+  header .ey{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--amber);
+    display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+  header .ey::before{content:"";width:28px;height:2px;background:var(--amber);}
+  header h1{font-family:var(--ui);font-weight:700;font-size:clamp(34px,5vw,52px);letter-spacing:-.02em;line-height:1.04;margin-bottom:14px;}
+  header h1 em{font-style:italic;font-weight:500;color:var(--amber);}
+  header p{color:var(--t2);font-size:16px;max-width:62ch;line-height:1.6;}
+
+  .layout{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:start;}
+  @media(max-width:900px){.layout{grid-template-columns:1fr;}}
+  .panel{background:rgba(255,255,255,.018);border:1px solid var(--hair);border-radius:22px;padding:26px;}
+  .panel .ttl{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--t2);margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+  .panel .ttl .i{width:13px;height:13px;border:1.4px solid var(--t2);border-radius:3px;}
+
+  /* hero decorated cassette */
+  .hero-wrap{position:relative;padding:14px 6px 6px;}
+  .cass{position:relative;width:100%;aspect-ratio:1.6/1;border-radius:15px;overflow:hidden;
+    padding:11px 13px;display:flex;flex-direction:column;
+    background:linear-gradient(165deg,#44444c,#2b2b30 55%,#1c1c20);
+    box-shadow:0 16px 34px rgba(0,0,0,.5), inset 0 2px 2px rgba(255,255,255,.14), inset 0 0 0 1px rgba(255,255,255,.06);}
+  .cass::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(140% 70% at 50% -10%, rgba(255,255,255,.10), transparent 55%);}
+  .scr{position:absolute;width:8px;height:8px;border-radius:50%;z-index:5;background:radial-gradient(circle at 35% 30%,#cfcfcf,transparent 55%),#4c4c52;box-shadow:inset 0 0 0 1px rgba(0,0,0,.4);}
+  .scr.tl{left:7px;top:7px;}.scr.tr{right:7px;top:7px;}.scr.bl{left:7px;bottom:7px;}.scr.br{right:7px;bottom:7px;}
+  .c-top{display:flex;align-items:center;gap:10px;padding:0 14px;margin-bottom:7px;position:relative;z-index:3;color:#ececed;}
+  .c-top .side{width:19px;height:19px;border:1.4px solid #ececed;border-radius:4px;display:grid;place-items:center;font-family:var(--ui);font-weight:700;font-size:10px;flex:none;}
+  .c-top .brand{flex:1;min-width:0;}
+  .c-top .brand .bn{font-family:var(--ui);font-weight:700;font-size:12.5px;letter-spacing:.07em;}
+  .c-top .brand .bd{font-family:var(--mono);font-size:6.5px;letter-spacing:.1em;opacity:.72;margin-top:2px;}
+  .c-top .brand .ln{height:2px;background:#9a9aa3;border-radius:1px;margin-top:4px;}
+  .c-top .dur{font-family:var(--ui);font-weight:700;font-size:12px;color:#9a9aa3;flex:none;}
+  .c-label{position:relative;z-index:3;margin:0 16px 8px;height:42px;border-radius:3px;background:linear-gradient(180deg,#fffef9,#f0efe9);box-shadow:0 8px 16px rgba(0,0,0,.4);transform:rotate(-.6deg);}
+  .c-label .hw{position:absolute;left:10px;right:10px;top:50%;transform:translateY(-50%) rotate(-.6deg);text-align:center;font-family:var(--hand);color:var(--ink);font-size:27px;line-height:1;white-space:nowrap;}
+  .tape{position:absolute;width:44px;height:14px;background:rgba(214,222,230,.4);border:1px solid rgba(255,255,255,.4);box-shadow:0 1px 2px rgba(0,0,0,.18);z-index:4;}
+  .tape.l{top:-6px;left:-8px;transform:rotate(-34deg);}
+  .tape.r{top:-6px;right:-8px;transform:rotate(34deg);}
+  .c-window{position:relative;z-index:2;margin:0 16px;flex:1;min-height:66px;border-radius:7px;overflow:hidden;background:linear-gradient(160deg,#1c1c20,#0b0b0d);box-shadow:inset 0 2px 8px rgba(0,0,0,.7);}
+  .c-window .gloss{position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(118deg,rgba(255,255,255,.10) 0%,transparent 22%);}
+  .pk{position:absolute;top:50%;border-radius:50%;z-index:0;background:radial-gradient(circle at 50% 50%,#1a1a1d 32%,#2c2c30 33%,#1f1f22 100%);}
+  .pk.l{left:26%;width:72px;height:72px;margin:-36px 0 0 -36px;}
+  .pk.r{left:74%;width:60px;height:60px;margin:-30px 0 0 -30px;}
+  .reel{position:absolute;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px;z-index:2;}
+  .reel.l{left:26%;}.reel.r{left:74%;}
+  .bridge{position:absolute;top:50%;left:38%;right:38%;height:26px;transform:translateY(-50%);z-index:1;background:repeating-linear-gradient(90deg,rgba(0,0,0,.18) 0 1px,transparent 1px 6px);opacity:.5;}
+  .c-bottom{position:relative;z-index:2;margin:8px 16px 0;height:25px;border-radius:6px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(0,0,0,.22));}
+  .c-bottom .ridges{position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(0,0,0,.16) 0 2px,transparent 2px 6px);}
+  .c-bottom .notch{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:44%;height:19px;background:rgba(0,0,0,.42);clip-path:polygon(8% 0,92% 0,100% 100%,0 100%);display:flex;align-items:center;justify-content:space-around;padding:0 14px;}
+  .c-bottom .hole{width:6px;height:6px;border-radius:50%;background:rgba(0,0,0,.6);box-shadow:inset 0 1px 1px rgba(0,0,0,.7);}
+  .c-bottom .badge{position:absolute;left:5px;top:50%;transform:translateY(-50%);width:16px;height:16px;border:1.3px solid #ececed;border-radius:4px;display:grid;place-items:center;font-family:var(--ui);font-weight:700;font-size:9px;color:#ececed;opacity:.85;}
+
+  /* stickers — matte paper, die-cut, contact shadow (no glow) */
+  .sticker{position:absolute;z-index:8;filter:url(#paper) drop-shadow(0 2px 1.5px rgba(0,0,0,.4));}
+  .sticker svg{display:block;}
+  .hint{margin-top:16px;font-size:13px;color:var(--t3);font-style:italic;}
+
+  /* sticker sheet tray */
+  .sheet{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .cell{position:relative;aspect-ratio:1/1;border-radius:14px;border:1.5px dashed rgba(255,255,255,.14);
+    background:rgba(255,255,255,.025);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+  .cell .st{filter:url(#paper) drop-shadow(0 1px 1px rgba(0,0,0,.28));}
+  .cell .nm{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);}
+
+  /* example label arrangements */
+  .examples{max-width:1180px;margin:34px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  @media(max-width:900px){.examples{grid-template-columns:1fr;}}
+  .ex{background:rgba(255,255,255,.018);border:1px solid var(--hair);border-radius:18px;padding:22px;}
+  .ex .label-card{position:relative;height:72px;border-radius:4px;background:linear-gradient(180deg,#fffef9,#f0efe9);
+    box-shadow:0 10px 22px rgba(0,0,0,.4);transform:rotate(-.8deg);display:grid;place-items:center;}
+  .ex .label-card .hw{font-family:var(--hand);color:var(--ink);font-size:27px;line-height:1;white-space:nowrap;}
+  .ex .label-card .sticker{filter:url(#paper) drop-shadow(0 1px 1px rgba(0,0,0,.3));}
+  .ex .cap{margin-top:14px;font-size:13px;color:var(--t2);}
+  .ex .cap b{color:var(--t1);font-family:var(--ui);font-weight:600;}
+
+  footer{max-width:1180px;margin:46px auto 0;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--t3);border-top:1px solid var(--hair);padding-top:24px;}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="paper" x="-15%" y="-15%" width="130%" height="130%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.62" numOctaves="3" seed="7" stitchTiles="stitch" result="n"/>
+    <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.20  0 0 0 0 0.15  0 0 0 0 0.08  0 0 0 0.13 0" result="grain"/>
+    <feComposite in="grain" in2="SourceAlpha" operator="in" result="g2"/>
+    <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="g2"/></feMerge>
+  </filter>
+</svg>
+<header>
+  <div class="ey">Cassette · Doodle Stickers</div>
+  <h1>A few <em>doodles</em> on the tape.</h1>
+  <p>Hand-drawn die-cut stickers the sender can peel onto the label or shell — hearts, moons, suns, little flowers and friends. Playful marker doodles with a white sticker edge, placed and rotated freely. Customization now = shell color + note font + stickers.</p>
+</header>
+
+<div class="layout">
+  <!-- decorated hero -->
+  <div class="panel">
+    <div class="ttl"><span class="i"></span>On the tape</div>
+    <div class="hero-wrap" id="hero">
+      <div class="cass">
+        <span class="scr tl"></span><span class="scr tr"></span><span class="scr bl"></span><span class="scr br"></span>
+        <div class="c-top">
+          <span class="side">A</span>
+          <div class="brand"><div class="bn">STANDARD</div><div class="bd">TYPE I · NORMAL · 120µs</div><div class="ln"></div></div>
+          <span class="dur">C-90</span>
+        </div>
+        <div class="c-label"><span class="tape l"></span><span class="tape r"></span><span class="hw">you + me, mixtape</span></div>
+        <div class="c-window">
+          <div class="gloss"></div><div class="pk l"></div><div class="pk r"></div>
+          <svg class="reel l" viewBox="0 0 120 120"></svg><svg class="reel r" viewBox="0 0 120 120"></svg>
+          <div class="bridge"></div>
+        </div>
+        <div class="c-bottom"><div class="ridges"></div><span class="badge">A</span><div class="notch"><span class="hole"></span><span class="hole"></span><span class="hole"></span><span class="hole"></span></div></div>
+      </div>
+      <!-- placed stickers (filled in by JS) -->
+    </div>
+    <div class="hint">Stickers are draggable — drop them anywhere on the label or shell, rotate &amp; scale to taste.</div>
+  </div>
+
+  <!-- sticker sheet -->
+  <div class="panel">
+    <div class="ttl"><span class="i"></span>Sticker sheet</div>
+    <div class="sheet" id="sheet"></div>
+  </div>
+</div>
+
+<!-- example arrangements -->
+<div class="examples" id="examples"></div>
+
+<footer>Cassette · Doodle stickers · die-cut marker doodles · placeable on label &amp; shell · part of Customize step · Jun 2026</footer>
+
+<script>
+function reelInner(){
+  let s='<circle cx="60" cy="60" r="58" fill="#f2efe7"/><circle cx="60" cy="60" r="57" fill="none" stroke="rgba(0,0,0,.14)" stroke-width="1.4"/>';
+  for(let i=0;i<16;i++){const a=i/16*Math.PI*2;const x=(60+41*Math.cos(a)).toFixed(1);const y=(60+41*Math.sin(a)).toFixed(1);s+=`<circle cx="${x}" cy="${y}" r="4.4" fill="#26211b"/>`;}
+  s+='<circle cx="60" cy="60" r="29" fill="#e6e2d7"/>';
+  for(let i=0;i<6;i++){const a=i/6*Math.PI*2;const x=60+18*Math.cos(a);const y=60+18*Math.sin(a);const deg=a*180/Math.PI+90;s+=`<rect x="${(x-3).toFixed(1)}" y="${(y-6).toFixed(1)}" width="6" height="12" rx="1.5" transform="rotate(${deg.toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)})" fill="#c9c4b6"/>`;}
+  s+='<circle cx="60" cy="60" r="11" fill="#b6b1a4" stroke="#26211b" stroke-width="3"/>';
+  return s;
+}
+document.querySelectorAll('.reel').forEach(r=>r.innerHTML=reelInner());
+
+// ---- doodle sticker library (24x24, cute marker fills + darker outline) ----
+const SVG = {
+  heart:`<path d="M12 20.6C12 20.6 3.4 14.5 3.4 8.7C3.4 6 5.6 4 8.1 4C10 4 11.4 5.1 12 6.4C12.6 5.1 14 4 15.9 4C18.4 4 20.6 6 20.6 8.7C20.6 14.5 12 20.6 12 20.6Z" fill="#FF566E" stroke="#C32f45" stroke-width="1.3"/>`,
+  moon:`<path d="M15.6 3.2A8.6 8.6 0 1 0 21 14.8A6.7 6.7 0 0 1 15.6 3.2Z" fill="#F2D23A" stroke="#C79A12" stroke-width="1.3" stroke-linejoin="round"/><circle cx="13" cy="7.5" r="1" fill="#C79A12"/>`,
+  sun:`<circle cx="12" cy="12" r="4.4" fill="#F5A623" stroke="#C77F12" stroke-width="1.3"/><g stroke="#F5A623" stroke-width="2.1" stroke-linecap="round"><line x1="12" y1="2.2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21.8"/><line x1="2.2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21.8" y2="12"/><line x1="5" y1="5" x2="6.9" y2="6.9"/><line x1="17.1" y1="17.1" x2="19" y2="19"/><line x1="19" y1="5" x2="17.1" y2="6.9"/><line x1="6.9" y1="17.1" x2="5" y2="19"/></g>`,
+  flower:`<g stroke="#C84f86" stroke-width="1.2"><ellipse cx="12" cy="6" rx="2.7" ry="4" fill="#FF8FB3"/><ellipse cx="12" cy="18" rx="2.7" ry="4" fill="#FF8FB3"/><ellipse cx="6" cy="12" rx="4" ry="2.7" fill="#FF8FB3"/><ellipse cx="18" cy="12" rx="4" ry="2.7" fill="#FF8FB3"/></g><circle cx="12" cy="12" r="3" fill="#F2D23A" stroke="#C79A12" stroke-width="1.2"/>`,
+  star:`<path d="M12 2.6l2.5 5.7 6.2.6-4.7 4.1 1.4 6.1L12 16l-5.4 3.2 1.4-6.1L3.3 8.9l6.2-.6z" fill="#FFCE3A" stroke="#D9A21a" stroke-width="1.3" stroke-linejoin="round"/>`,
+  cloud:`<path d="M7.5 18A4 4 0 0 1 7 10.1A5 5 0 0 1 16.4 9.2A4.2 4.2 0 0 1 16.5 18Z" fill="#9CCBFF" stroke="#4F8FD6" stroke-width="1.3" stroke-linejoin="round"/>`,
+  bolt:`<path d="M13 2.2 4.6 13.4H10l-1.2 8.4L19 9.6h-5.6z" fill="#FFD23A" stroke="#D9A21a" stroke-width="1.3" stroke-linejoin="round"/>`,
+  note:`<g fill="#6AA9FF" stroke="#3E73C8" stroke-width="1.2"><path d="M9.2 17.5V6.2l8-1.7v10.4" fill="none" stroke-width="2"/><ellipse cx="7" cy="17.6" rx="2.6" ry="2.2"/><ellipse cx="15" cy="15.8" rx="2.6" ry="2.2"/></g>`,
+  smiley:`<circle cx="12" cy="12" r="9" fill="#FFCE3A" stroke="#D9A21a" stroke-width="1.3"/><circle cx="9" cy="10.5" r="1.2" fill="#7A5410"/><circle cx="15" cy="10.5" r="1.2" fill="#7A5410"/><path d="M8 14.5a4 4 0 0 0 8 0" fill="none" stroke="#7A5410" stroke-width="1.6" stroke-linecap="round"/>`,
+  sparkle:`<path d="M12 2.4c.6 5 1.7 7.7 8 9.6-6.3 1.9-7.4 4.6-8 9.6-.6-5-1.7-7.7-8-9.6 6.3-1.9 7.4-4.6 8-9.6z" fill="#E6D2FF" stroke="#9B7BD6" stroke-width="1.3" stroke-linejoin="round"/>`,
+};
+const NAMES = {heart:"Heart",moon:"Moon",sun:"Sun",flower:"Flower",star:"Star",cloud:"Cloud",bolt:"Bolt",note:"Note",smiley:"Smiley",sparkle:"Sparkle"};
+function svg(key,size){return `<svg viewBox="0 0 24 24" width="${size}" height="${size}">${SVG[key]}</svg>`;}
+
+// sticker sheet
+document.getElementById('sheet').innerHTML = Object.keys(SVG).map(k=>
+  `<div class="cell"><span class="st">${svg(k,44)}</span><span class="nm">${NAMES[k]}</span></div>`).join('');
+
+// placed on hero (top%, left%, size, rotate)
+const PLACED = [
+  ["heart", 8, 78, 40, 14],
+  ["star", 60, 6, 34, -12],
+  ["moon", 4, 10, 32, -18],
+  ["flower", 50, 86, 38, 10],
+  ["sparkle", 30, 44, 26, 0],
+  ["sun", 12, 54, 28, 8],
+];
+const hero = document.getElementById('hero');
+PLACED.forEach(([k,t,l,s,r])=>{
+  const el=document.createElement('span');
+  el.className='sticker';
+  el.style.cssText=`top:${t}%;left:${l}%;transform:rotate(${r}deg);`;
+  el.innerHTML=svg(k,s);
+  hero.appendChild(el);
+});
+
+// example label arrangements
+const EX = [
+  {title:"love note", stickers:[["heart",26,"-12px","6px",12],["sparkle",18,"4px","auto",-10]], cap:"<b>Romantic</b> — a heart by the corner, a sparkle accent."},
+  {title:"sunny side", stickers:[["sun",26,"-10px","auto",-8],["flower",22,"6px","-8px",14]], cap:"<b>Bright</b> — sun + flower for a cheerful summer tape."},
+  {title:"goodnight", stickers:[["moon",24,"-10px","8px",-12],["star",16,"6px","auto",10],["star",13,"22px","-6px",-6]], cap:"<b>Dreamy</b> — moon and a couple of little stars."},
+];
+document.getElementById('examples').innerHTML = EX.map(e=>`
+  <div class="ex">
+    <div class="label-card">
+      <span class="hw">${e.title}</span>
+      ${e.stickers.map(([k,s,top,right,rot],i)=>{
+        const left = right==='auto' ? `left:${[8,'-8px','auto'][0]||'8px'}` : '';
+        return `<span class="sticker" style="top:${top};${right!=='auto'?`right:${right};`:'left:8px;'}transform:rotate(${rot}deg)">${svg(k,s)}</span>`;
+      }).join('')}
+    </div>
+    <div class="cap">${e.cap}</div>
+  </div>`).join('');
+</script>
+</body>
+</html>

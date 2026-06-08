@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cassette — Mixtape Color Themes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Reenie+Beanie&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0B0B0C;--t1:#F4F4F2;--t2:#9A9AA0;--t3:#65656B;--hair:rgba(255,255,255,.08);
+    --amber:#E8A030;--ui:"Space Grotesk",sans-serif;--body:"DM Sans",sans-serif;
+    --mono:"JetBrains Mono",monospace;--hand:"Reenie Beanie",cursive;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:radial-gradient(120% 70% at 80% -5%, rgba(232,160,48,.06), transparent 55%),#08080a;
+    color:var(--t1);font-family:var(--body);min-height:100vh;padding:54px 40px 80px;}
+  header{max-width:1180px;margin:0 auto 46px;}
+  header .ey{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--amber);
+    display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+  header .ey::before{content:"";width:28px;height:2px;background:var(--amber);}
+  header h1{font-family:var(--ui);font-weight:700;font-size:clamp(34px,5vw,52px);letter-spacing:-.02em;line-height:1.04;margin-bottom:14px;}
+  header h1 em{font-style:italic;font-weight:500;color:var(--amber);}
+  header p{color:var(--t2);font-size:16px;max-width:62ch;line-height:1.6;}
+
+  .grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:34px 32px;}
+  @media(max-width:880px){.grid{grid-template-columns:1fr;}}
+
+  .card{background:rgba(255,255,255,.018);border:1px solid var(--hair);border-radius:22px;padding:22px 22px 18px;}
+  .cap{display:flex;align-items:baseline;justify-content:space-between;margin-top:18px;}
+  .cap .nm{font-family:var(--ui);font-weight:600;font-size:18px;}
+  .cap .nm .sw{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:8px;vertical-align:middle;border:1px solid rgba(255,255,255,.2);}
+  .cap .ref{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);}
+  .cap .hex{font-family:var(--mono);font-size:11px;color:var(--t2);}
+
+  /* ===== cassette ===== */
+  .cass{position:relative;width:100%;aspect-ratio:1.6/1;border-radius:15px;overflow:hidden;
+    padding:11px 13px;display:flex;flex-direction:column;
+    background:linear-gradient(165deg,var(--sa),var(--sb) 55%,var(--sc));
+    box-shadow:0 16px 34px rgba(0,0,0,.5), inset 0 2px 2px rgba(255,255,255,.14), inset 0 0 0 1px rgba(255,255,255,.06);}
+  .cass::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(140% 70% at 50% -10%, rgba(255,255,255,.10), transparent 55%);}
+  .scr{position:absolute;width:8px;height:8px;border-radius:50%;z-index:5;
+    background:radial-gradient(circle at 35% 30%,#cfcfcf,transparent 55%),#4c4c52;box-shadow:inset 0 0 0 1px rgba(0,0,0,.4);}
+  .scr.tl{left:7px;top:7px;}.scr.tr{right:7px;top:7px;}.scr.bl{left:7px;bottom:7px;}.scr.br{right:7px;bottom:7px;}
+
+  .c-top{display:flex;align-items:center;gap:10px;padding:0 14px;margin-bottom:7px;position:relative;z-index:3;color:var(--pr);}
+  .c-top .side{width:19px;height:19px;border:1.4px solid var(--pr);border-radius:4px;display:grid;place-items:center;
+    font-family:var(--ui);font-weight:700;font-size:10px;flex:none;}
+  .c-top .brand{flex:1;min-width:0;}
+  .c-top .brand .bn{font-family:var(--ui);font-weight:700;font-size:12.5px;letter-spacing:.07em;white-space:nowrap;}
+  .c-top .brand .bd{font-family:var(--mono);font-size:6.5px;letter-spacing:.1em;opacity:.72;margin-top:2px;white-space:nowrap;}
+  .c-top .brand .ln{height:2px;background:var(--ac);border-radius:1px;margin-top:4px;}
+  .c-top .dur{font-family:var(--ui);font-weight:700;font-size:12px;color:var(--ac);flex:none;}
+
+  .c-label{position:relative;z-index:3;margin:0 16px 8px;height:42px;border-radius:3px;
+    background:linear-gradient(180deg,#fffef9,#f0efe9);box-shadow:0 8px 16px rgba(0,0,0,.4);transform:rotate(-.6deg);}
+  .c-label .hw{position:absolute;left:10px;right:10px;top:50%;transform:translateY(-50%) rotate(-.6deg);text-align:center;
+    font-family:var(--hand);color:#2747c4;font-size:27px;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .tape{position:absolute;width:44px;height:14px;background:rgba(214,222,230,.4);border:1px solid rgba(255,255,255,.4);
+    box-shadow:0 1px 2px rgba(0,0,0,.18);z-index:4;}
+  .tape.l{top:-6px;left:-8px;transform:rotate(-34deg);}
+  .tape.r{top:-6px;right:-8px;transform:rotate(34deg);}
+
+  .c-window{position:relative;z-index:2;margin:0 16px;flex:1;min-height:66px;border-radius:7px;overflow:hidden;
+    background:linear-gradient(160deg,#1c1c20,#0b0b0d);box-shadow:inset 0 2px 8px rgba(0,0,0,.7);}
+  .c-window .gloss{position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(118deg,rgba(255,255,255,.10) 0%,transparent 22%);}
+  .pk{position:absolute;top:50%;border-radius:50%;z-index:0;background:radial-gradient(circle at 50% 50%,#1a1a1d 32%,#2c2c30 33%,#1f1f22 100%);}
+  .pk.l{left:26%;width:72px;height:72px;margin:-36px 0 0 -36px;}
+  .pk.r{left:74%;width:60px;height:60px;margin:-30px 0 0 -30px;}
+  .reel{position:absolute;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px;z-index:2;}
+  .reel.l{left:26%;}.reel.r{left:74%;}
+  .bridge{position:absolute;top:50%;left:38%;right:38%;height:26px;transform:translateY(-50%);z-index:1;
+    background:repeating-linear-gradient(90deg,rgba(0,0,0,.18) 0 1px,transparent 1px 6px);opacity:.5;}
+
+  .c-bottom{position:relative;z-index:2;margin:8px 16px 0;height:25px;border-radius:6px;overflow:hidden;
+    background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(0,0,0,.22));}
+  .c-bottom .ridges{position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(0,0,0,.16) 0 2px,transparent 2px 6px);}
+  .c-bottom .desig{position:absolute;left:30px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:6.5px;letter-spacing:.14em;color:var(--pr);opacity:.8;}
+  .c-bottom .notch{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:44%;height:19px;
+    background:rgba(0,0,0,.42);clip-path:polygon(8% 0,92% 0,100% 100%,0 100%);
+    display:flex;align-items:center;justify-content:space-around;padding:0 14px;}
+  .c-bottom .hole{width:6px;height:6px;border-radius:50%;background:rgba(0,0,0,.6);box-shadow:inset 0 1px 1px rgba(0,0,0,.7);}
+  .c-bottom .badge{position:absolute;left:5px;top:50%;transform:translateY(-50%);width:16px;height:16px;border:1.3px solid var(--pr);
+    border-radius:4px;display:grid;place-items:center;font-family:var(--ui);font-weight:700;font-size:9px;color:var(--pr);opacity:.85;}
+
+  footer{max-width:1180px;margin:46px auto 0;font-family:var(--mono);font-size:11px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--t3);border-top:1px solid var(--hair);padding-top:24px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="ey">Cassette · Shell Themes</div>
+  <h1>Eight shells, <em>one tape</em>.</h1>
+  <p>One cassette design rendered in all eight app shell colors, each dressed in a vintage label treatment drawn from the reference. The taped index-card note stays on every one — handwritten in blue ballpoint. Pick the palette; the note font is chosen separately.</p>
+</header>
+
+<div class="grid" id="grid"></div>
+
+<footer>Cassette · Mixtape shell themes · 8 colors · vintage label studies · note font selected separately · Jun 2026</footer>
+
+<script>
+const THEMES = [
+  {key:"graphite", name:"Graphite", hex:"#3A3A42", ref:"Standard C-90", sa:"#44444c", sb:"#2b2b30", sc:"#1c1c20", pr:"#ececed", ac:"#9a9aa3", brand:"STANDARD", desig:"TYPE I · NORMAL · 120µs", dur:"C-90", side:"A", note:"our long drive home"},
+  {key:"cocoa", name:"Cocoa Brown", hex:"#5C3A24", ref:"Ferric", sa:"#6e4a30", sb:"#523320", sc:"#38210f", pr:"#f3e6d6", ac:"#e0a35a", brand:"FERRIC", desig:"TYPE I · LOW NOISE", dur:"C-90", side:"A", note:"autumn in your car"},
+  {key:"bone", name:"Bone White", hex:"#F4F4F2", ref:"Superferric", sa:"#ffffff", sb:"#f1f0ea", sc:"#dcd8ce", pr:"#33332f", ac:"#d98a1e", brand:"SUPERFERRIC", desig:"HIGH ENERGY · LOW NOISE", dur:"C-60", side:"A", note:"summer tape '89"},
+  {key:"violet", name:"Violet", hex:"#7B2FBE", ref:"Extreme II", sa:"#8e44d0", sb:"#6f29ab", sc:"#4c1c78", pr:"#f3e9ff", ac:"#e070c8", brand:"EXTREME", desig:"TYPE II · HIGH POSITION", dur:"C-90", side:"A", note:"purple rain replay"},
+  {key:"marine", name:"Marine", hex:"#16607A", ref:"Low Noise 120", sa:"#1d7596", sb:"#155b73", sc:"#0d3f50", pr:"#e6f6ff", ac:"#3ec8e6", brand:"LOW NOISE", desig:"FERRIC · 120µs EQ", dur:"C-120", side:"A", note:"deep blue something"},
+  {key:"forest", name:"Forest", hex:"#1F7A5E", ref:"Sanwa Low", sa:"#259170", sb:"#1c7057", sc:"#114a39", pr:"#eafff4", ac:"#f2d23a", brand:"LOW NOISE", desig:"INDEX · NORMAL BIAS", dur:"C-90", side:"A", note:"evergreen, for you"},
+  {key:"rose", name:"Rose", hex:"#A83B6B", ref:"Ferro Color", sa:"#c0497e", sb:"#9a3460", sc:"#6e2444", pr:"#ffe9f2", ac:"#ff6a6a", brand:"FERRO COLOR", desig:"FERRO · 60 · TYPE I", dur:"C-60", side:"A", note:"love in stereo"},
+  {key:"amber", name:"Amber", hex:"#E8A030", ref:"Chrom Super", sa:"#f2b850", sb:"#dd8f24", sc:"#a86314", pr:"#3a2208", ac:"#c0392b", brand:"CHROM SUPER", desig:"CHROM DIOXID · TYPE II", dur:"C-60", side:"A", note:"golden hour mix"},
+];
+
+function reelInner(){
+  let s='<circle cx="60" cy="60" r="58" fill="#f2efe7"/><circle cx="60" cy="60" r="57" fill="none" stroke="rgba(0,0,0,.14)" stroke-width="1.4"/>';
+  for(let i=0;i<16;i++){const a=i/16*Math.PI*2;const x=(60+41*Math.cos(a)).toFixed(1);const y=(60+41*Math.sin(a)).toFixed(1);s+=`<circle cx="${x}" cy="${y}" r="4.4" fill="#26211b"/>`;}
+  s+='<circle cx="60" cy="60" r="29" fill="#e6e2d7"/>';
+  for(let i=0;i<6;i++){const a=i/6*Math.PI*2;const x=60+18*Math.cos(a);const y=60+18*Math.sin(a);const deg=a*180/Math.PI+90;s+=`<rect x="${(x-3).toFixed(1)}" y="${(y-6).toFixed(1)}" width="6" height="12" rx="1.5" transform="rotate(${deg.toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)})" fill="#c9c4b6"/>`;}
+  s+='<circle cx="60" cy="60" r="11" fill="#b6b1a4" stroke="#26211b" stroke-width="3"/>';
+  return s;
+}
+const REEL=reelInner();
+
+function cassette(t){
+  return `<div class="cass" style="--sa:${t.sa};--sb:${t.sb};--sc:${t.sc};--pr:${t.pr};--ac:${t.ac}">
+    <span class="scr tl"></span><span class="scr tr"></span><span class="scr bl"></span><span class="scr br"></span>
+    <div class="c-top">
+      <span class="side">${t.side}</span>
+      <div class="brand"><div class="bn">${t.brand}</div><div class="bd">${t.desig}</div><div class="ln"></div></div>
+      <span class="dur">${t.dur}</span>
+    </div>
+    <div class="c-label"><span class="tape l"></span><span class="tape r"></span><span class="hw">${t.note}</span></div>
+    <div class="c-window">
+      <div class="gloss"></div><div class="pk l"></div><div class="pk r"></div>
+      <svg class="reel l" viewBox="0 0 120 120">${REEL}</svg>
+      <svg class="reel r" viewBox="0 0 120 120">${REEL}</svg>
+      <div class="bridge"></div>
+    </div>
+    <div class="c-bottom">
+      <div class="ridges"></div>
+      <span class="badge">${t.side}</span>
+      <span class="desig">${t.brand} · ${t.dur}</span>
+      <div class="notch"><span class="hole"></span><span class="hole"></span><span class="hole"></span><span class="hole"></span></div>
+    </div>
+  </div>`;
+}
+
+document.getElementById('grid').innerHTML = THEMES.map(t=>`
+  <div class="card">
+    ${cassette(t)}
+    <div class="cap">
+      <span class="nm"><span class="sw" style="background:${t.hex}"></span>${t.name}</span>
+      <span class="ref">${t.ref} · ${t.hex}</span>
+    </div>
+  </div>`).join('');
+</script>
+</body>
+</html>

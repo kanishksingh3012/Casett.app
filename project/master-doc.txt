@@ -1,0 +1,532 @@
+
+CASSETTE MIXTAPE MAKER
+Master Design Document
+
+Brand Guidelines  |  PRD  |  Design Spec  |  Process
+v1.0  |  June 2026
+
+TOC \h \o "1-2"
+
+
+Brand Guidelines
+Five themes available. Pick exactly one before Phase 1 begins. Universal tokens apply to all themes.
+
+Theme Options
+#
+Theme
+Vibe
+Primary
+Accent
+Display font
+Body font
+Label font
+01
+Wax & Grain
+Warm nostalgic record shop
+#2C1A0E
+#E8A030
+Playfair Display
+DM Sans
+Caveat
+02
+Chrome Baby
+Y2K maximalist ironic bold
+#1A1A1A
+#FF2D78
+Space Grotesk
+Inter
+JetBrains Mono
+03
+Bedroom Tape
+Soft intimate handmade
+#3D2B3D
+#7BA68A
+Lora
+DM Sans
+Caveat
+04
+Static & Fury
+Punk DIY raw confrontational
+#0A0A0A
+#FF1A1A
+Bebas Neue
+Space Mono
+Space Mono
+05
+Neon Rewind
+Synthwave cinematic nostalgic-future
+#7B2FBE
+#00F5D4
+Outfit
+Inter
+JetBrains Mono
+
+Universal Design Tokens
+These apply to every theme regardless of which you choose. Never hardcode values — always reference tokens.
+
+Token
+Value
+Spacing unit
+4px — scale: 4, 8, 12, 16, 24, 32, 48, 64, 80, 96px
+Corner radius
+sm 6px | md 10px | lg 16px | xl 24px | pill 9999px
+Spring gentle
+stiffness 60, damping 20 — floaty/organic feel
+Spring standard
+stiffness 200, damping 22 — most UI interactions
+Spring snappy
+stiffness 400, damping 24 — fast/mechanical
+Spring cinematic
+stiffness 50, damping 22 — Neon Rewind theme only
+Touch target min
+44x44px iOS | 48x48dp Android
+Icon sizes
+sm 16px | md 20px | lg 24px | xl 32px
+Elevation 1
+Subtle lift — cards, panels
+Elevation 2
+Floating — dropdowns, tooltips
+Elevation 3
+Overlay — modals, sheets
+
+Typography Scale
+Style
+Size
+Weight
+Line-height
+Usage
+Display XL
+48px
+700
+1.1
+Hero headlines, landing screen
+Display L
+36px
+700
+1.2
+Screen titles
+Heading 1
+28px
+600
+1.3
+Section headings
+Heading 2
+22px
+600
+1.3
+Sub-section headings
+Body L
+18px
+400
+1.6
+Primary body text
+Body M
+16px
+400
+1.6
+Secondary body, descriptions
+Body S
+14px
+400
+1.5
+Captions, helper text
+Label L
+16px
+500
+1.0
+Button labels, nav items
+Label M
+13px
+500
+1.0
+Tags, badges, input labels
+Mono M
+14px
+400
+1.0
+LCD display, status strip, code
+Mono S
+11px
+400
+1.0
+Fine print, hex values
+
+User Flows
+Three core flows — these override all previous definitions in earlier documents.
+
+Flow 1 — Create a Mixtape
+Entry point: Home screen (+) icon. The primary creative flow — building and sending a personalized cassette tape.
+
+STEPS
+Home — tap the (+) icon to begin a new tape
+Cassette interface opens — blank tape renders with default label and color
+Add content — two tabs are available:
+Record / Song tab
+Upload a Voice Note (VN) — mic recording, plays as Side A intro
+Attach a song — search by title/artist or paste a link
+Customization tab
+Notes — write a personal message displayed on or inside the label
+Theme — pick shell color, label background, and font style
+Stickers — place SVG doodle stickers on the label
+Share + Save — final action screen
+Save to library (local draft)
+Share — generates unique link and visual share card
+
+SCREENS
+Home
+New Mixtape (Cassette UI)
+Add Song / Record Voice Note
+Customization
+Share + Save
+(Recipient) Tape Player
+
+Flow 2 — Create a Seal
+The Seal is your creator identity — a personal stamp on every tape you send, like a wax seal on an envelope. Triggered at first launch and editable any time from Home or Settings.
+
+A Seal contains: your handle/name, a custom stamp shape, a color, and optionally a small icon or avatar. It appears on every tape you create and is visible to recipients in the Tape Player.
+
+STEPS
+Onboarding screens (first-time only) — 3 intro screens explaining the app value
+Home — "Create your Seal" prompt shown until Seal is made
+Create Seal screen — handle, stamp shape, color, icon
+Preview — see Seal on a sample tape before confirming
+Save — Seal is now applied to all future tapes
+Edit Seal — accessible any time from Home or Settings
+
+SCREENS
+Onboarding 1 / 2 / 3
+Home (with Seal prompt)
+Create Seal
+Edit Seal
+
+Flow 3 — Explore Library
+The Library is your personal jukebox — all tapes you have created, arranged as a visual grid of cassettes. Re-play, re-share, or manage existing tapes.
+
+STEPS
+Home — tap Library tab or section
+Library — grid of cassettes (each shows label, title, color, Seal)
+Tap a tape — opens Tape Player in creator read-only mode
+Share again — re-send the tape link to a new recipient
+(V2+) Edit tape — update label, tracklist, or customization
+
+SCREENS
+Home
+Library (Jukebox grid)
+Tape Player (creator view)
+
+Screen Inventory
+13 screens total across 3 flows. Every screen requires a light mode and dark mode version, an empty state, and key error states.
+
+Screen
+Flow
+Description
+Onboarding 1
+Create Seal
+First-time only. App intro — value proposition, the mixtape concept.
+Onboarding 2
+Create Seal
+First-time only. What the Seal is and why it matters to recipients.
+Onboarding 3
+Create Seal
+First-time only. CTA — create your Seal to get started.
+Create Seal
+Create Seal
+Handle, stamp shape, color, icon picker. Preview of Seal on tape.
+Edit Seal
+Create Seal
+Same layout as Create Seal, pre-filled with saved data.
+Home
+All flows
+Entry point. (+) button, Library nav, Seal badge display, recent tapes.
+New Mixtape
+Create Mixtape
+Cassette UI renders — blank tape, label editable, reels idle.
+Add Song / Record
+Create Mixtape
+Two tabs: search/attach a song | record voice note. Both states designed.
+Customization
+Create Mixtape
+Notes, Theme (color + style), Sticker placement.
+Share + Save
+Create Mixtape
+Tape preview, copy link, native share sheet trigger, save to library.
+Library
+Explore Library
+Grid of all saved tapes (jukebox). Empty state required. Tap to open.
+Tape Player
+Shared / Explore
+Recipient-facing cassette player. Controls, LCD strip, tracklist.
+Settings / Profile
+Global
+Edit Seal, app theme preference, account info.
+
+Design Elements & Components
+Seven core components. Build in the order listed — each later component depends on earlier ones. All states and variants must be complete before moving to hi-fi screens.
+
+Component
+Description
+Variants
+States
+Key notes
+01  Buttons
+All interactive tap targets in the app.
+Primary, Secondary, Ghost, Icon-only, Destructive
+Default, Hover (web), Pressed, Loading, Disabled
+Min 44x44px touch target. Mechanical press animation (scale 0.97 + haptic on native). Primary uses theme accent color.
+02  Audio Track
+A single song row in the tracklist.
+Default, Playing, Compact, With drag handle
+Default, Active/Playing, Drag, Disabled
+Album art (40x40px), title, artist, duration. Orange tape-length bar proportional to song duration. Drag handle on right for reorder.
+03  Mixtape Design
+The cassette SVG — hero visual of the app.
+Portrait mobile, Landscape desktop, Mini thumbnail, Label-only card
+Idle/Ejected, Playing (reels spin), Paused, Flipping (3D Side B)
+Layered SVG: shell > window > reels > label. Shell color = CSS variable. Reels animate via CSS (web) or Reanimated (native). Label is the customizable zone.
+04  Icons
+System icon set across all surfaces.
+Player controls, Nav, Actions, Cassette-specific
+Default, Active, Disabled
+24px standard / 20px compact. Consistent 1.5px stroke. SVG only — no icon fonts. Custom cassette icons for brand differentiation.
+05  Seal
+Creator identity stamp on every tape.
+Full (name+icon+shape), Compact (icon+handle), Mini (icon only)
+Default, Edit mode, Empty/Prompt state
+Stamp shapes: circle, hexagon, star, diamond. Applied as overlay on tape label. Visible to recipient in Tape Player.
+06  Share Format
+Card and sheet when sharing a tape.
+Share sheet (modal), Share card image (PNG), Link preview card
+Default, Generating, Link copied, Error
+Share card = static PNG of cassette label + Seal + title. Short URL format: domain/tape/[id].
+07  Input Field
+Text input for title, notes, Seal name, search.
+Single-line, Multi-line (notes), Search (icon prefix), Inline label edit
+Default, Focused, Filled, Error, Disabled
+Pill radius for search, md radius for standard. Char count where applicable. Inline label edit uses cassette/handwritten font.
+
+Design Process Phases
+Five sequential phases. Complete each phase before starting the next. Design in Figma first, then code.
+
+Phase 1 — Design System
+Build the foundation. No screen or component is created without tokens defined first.
+
+DELIVERABLES
+Figma file — pages: Tokens | Components | Wireframes | Hi-Fi
+Color styles — full light + dark palette for chosen theme, all semantic roles
+Text styles — all 11 sizes from the typography scale
+Grid styles — 4px base grid, 16-column grid at 375px mobile
+Motion reference page — spring presets documented with values
+Component token map — token name per component part
+
+ORDER OF WORK
+Choose one of the five brand themes
+Define primitive color tokens (raw hex values)
+Define semantic color tokens (role-based: background, surface, text, border, accent)
+Create all Figma color styles
+Create all Figma text styles
+Document grid and spacing system
+Document motion/spring values
+
+Phase 2 — Wireframes
+Lo-fi layout for all 13 screens. Grayscale only. Focus entirely on content hierarchy, layout, and navigation logic.
+
+RULES
+Three grays only: white / #F0F0F0 / #CCCCCC
+Rectangles for all images and cassette visuals
+Annotate every non-obvious interaction with a sticky note
+Show both empty state and filled state for every screen
+Mobile 375px only at this stage — desktop comes in Phase 5
+
+SCREENS TO WIREFRAME (IN ORDER)
+Home — empty state + with tapes + with Seal prompt
+New Mixtape — cassette skeleton
+Add Song / Record — both tabs
+Customization
+Share + Save
+Library — grid + empty state
+Tape Player — recipient view
+Create Seal
+Edit Seal
+Onboarding 1, 2, 3
+Settings / Profile
+
+Phase 3 — Wireframe Iteration
+Review and refine before building anything. Structural changes are free here — expensive later.
+
+KEY QUESTIONS
+Is (+) on Home the right entry for Create Mixtape, or should it be more prominent?
+Does the two-tab layout (Record | Customization) make sense, or is one linear flow better?
+When does the Seal prompt appear — forced in onboarding, or can it be deferred?
+Is the Library discoverable enough from Home?
+What does the cassette look like as a Library thumbnail? Does it carry enough info?
+How does Share + Save communicate the tape is ready without feeling like a generic share sheet?
+
+OUTPUTS
+Revised wireframes v2 with all structural changes applied
+Navigation map — flow diagram showing all screen connections
+Interaction notes — annotated list of every animation and transition needed
+
+Phase 4 — Component Design
+Design all 7 components fully — every variant, every state — using design tokens. These become the Figma library used to assemble hi-fi screens.
+
+BUILD ORDER (FOLLOW THIS SEQUENCE)
+Input Field — simplest, used everywhere, good warm-up
+Buttons — all variants + states, establishes interaction patterns
+Icons — full set, export as SVG
+Audio Track Component — uses icons + typography
+Mixtape Design — most complex, the hero SVG component
+Seal — uses icons + shape variants + typography
+Share Format — uses Mixtape Design + Seal, the final composite
+
+PER-COMPONENT SPEC REQUIRED
+All variants in one Figma frame
+All states documented
+Anatomy diagram with token labels
+Do / Don't usage examples
+
+Phase 5 — Hi-fi Design
+Apply the design system to all wireframes. This is the final visual output that gets handed to Claude Code for implementation.
+
+SCREEN PRIORITY ORDER
+New Mixtape (Cassette UI) — sets the entire visual tone
+Tape Player — recipient experience, equally important
+Home — first real screen most users see
+Customization — creative and visually complex
+Share + Save — the climactic product moment
+Library — jukebox grid, visually interesting
+Create Seal — identity moment
+All remaining screens
+
+HI-FI CHECKLIST PER SCREEN
+Light mode version complete
+Dark mode version complete
+Empty state designed
+Error states designed
+Interactions annotated — what animates, which spring preset
+Handoff specs added — spacing, token names, component links
+
+Feature Versioning
+Four feature releases. Design all phases in Figma first across all versions, then build release by release.
+
+Feature
+V1  MVP
+V2  Identity
+V3  Audio
+V4  Native
+Cassette SVG (shell, reels, label, animation)
+Yes
+—
+—
+—
+Label customization — title, color
+Yes
+Yes
+—
+—
+Manual song entry — no streaming
+Yes
+—
+—
+—
+Playback controls + mechanical sound effects
+Yes
+—
+—
+—
+Tape flip animation (Side A / Side B)
+Yes
+—
+—
+—
+Shareable URL (base64 / Vercel KV)
+Yes
+—
+—
+—
+Mobile-responsive portrait layout
+Yes
+—
+—
+—
+Create Seal flow
+—
+Yes
+—
+—
+Sticker placement on label
+—
+Yes
+—
+—
+Notes / written message on tape
+—
+Yes
+—
+—
+Library / jukebox view
+—
+Yes
+—
+—
+Share again from Library
+—
+Yes
+—
+—
+Share card PNG export
+—
+Yes
+—
+—
+Voice note recording (VN)
+—
+—
+Yes
+—
+Spotify search + OAuth integration
+—
+—
+Yes
+—
+Tape audio effects (wow / flutter / hiss)
+—
+—
+Yes
+—
+Expo native app (iOS + Android)
+—
+—
+—
+Yes
+Haptic feedback on interactions
+—
+—
+—
+Yes
+Native share sheet
+—
+—
+—
+Yes
+Background audio playback
+—
+—
+—
+Yes
+
+Design vs. Build sequencing
+Design all 5 phases in Figma before writing any code. Then implement V1 from the hi-fi screens. Return to Figma for any new screens before each subsequent build cycle.
+
+Design (Figma)
+Build (Claude Code)
+Phases 1–5 complete (all screens + components)
+V1 — built from hi-fi screens
+V2 screens refined if needed
+V2 — after V1 ships
+V3 audio/Spotify screens designed
+V3 — after V2 ships
+Native-specific patterns adapted
+V4 Expo port — after V3
+
+
+Cassette Mixtape Maker  |  Master Design Document  |  v1.0  |  June 2026

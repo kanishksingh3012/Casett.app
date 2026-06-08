@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cassette Mixtape Maker — Mixtape Designs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&family=Caveat:wght@500;600;700&family=Shadows+Into+Light&family=Permanent+Marker&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{font-family:"DM Sans",system-ui,sans-serif;background:#2b2622;}
+  #root{height:100vh;}
+
+  /* ===== STAGE (inside each artboard) ===== */
+  .stage{position:relative;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:34px 22px 20px;}
+  .stage .surface{position:absolute;inset:0;z-index:0;}
+  .spec{position:absolute;left:0;right:0;bottom:14px;display:flex;justify-content:center;gap:14px;z-index:5;
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;}
+  .spec b{font-weight:700;}
+
+  /* ===== CASSETTE BASE ===== */
+  .cassette{position:relative;width:472px;height:298px;z-index:3;filter:drop-shadow(0 26px 40px rgba(0,0,0,.45));}
+  .shell{position:absolute;inset:0;border-radius:16px;overflow:hidden;}
+  .screw{position:absolute;width:13px;height:13px;border-radius:50%;z-index:6;
+    background:radial-gradient(circle at 35% 30%, #fff6, transparent 60%), #6b6b6b;
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.25);}
+  .screw::after{content:"";position:absolute;inset:4px;border-radius:50%;background:rgba(0,0,0,.28);}
+  .screw.tl{left:11px;top:11px;} .screw.tr{right:11px;top:11px;}
+  .screw.bl{left:11px;bottom:11px;} .screw.br{right:11px;bottom:11px;}
+
+  .brand-strip{position:absolute;top:15px;left:38px;right:38px;height:22px;display:flex;align-items:center;justify-content:space-between;z-index:4;}
+  .brand-left{display:flex;align-items:center;gap:9px;}
+  .brand-tri{font-size:9px;}
+  .brand-model{font-family:"DM Sans";font-weight:700;font-size:17px;letter-spacing:.02em;}
+  .brand-type{font-family:"JetBrains Mono",monospace;font-size:7.5px;line-height:1.15;letter-spacing:.04em;opacity:.8;max-width:120px;}
+  .brand-logo{font-family:"DM Sans";font-weight:800;font-size:15px;letter-spacing:.06em;}
+
+  /* window + reels */
+  .window{position:absolute;top:46px;left:30px;right:30px;height:166px;border-radius:9px;overflow:hidden;z-index:1;}
+  .window-gloss{position:absolute;inset:0;z-index:3;pointer-events:none;
+    background:linear-gradient(118deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,.04) 22%, transparent 40%);}
+  .tape-pack{position:absolute;top:50%;width:158px;height:158px;margin:-79px 0 0 -79px;border-radius:50%;z-index:0;}
+  .tape-pack.left{left:27%;}
+  .tape-pack.right{left:73%;width:140px;height:140px;margin:-70px 0 0 -70px;}
+  .reel{position:absolute;top:50%;width:100px;height:100px;margin:-50px 0 0 -50px;z-index:2;}
+  .reel.left{left:27%;} .reel.right{left:73%;}
+  .reel-svg{width:100%;height:100%;display:block;animation:none;}
+  .bridge{position:absolute;top:50%;left:38%;right:38%;height:70px;transform:translateY(-50%);z-index:1;
+    background:repeating-linear-gradient(90deg, rgba(0,0,0,.16) 0 1px, transparent 1px 7px);opacity:.5;}
+
+  /* reel default (white hubs) */
+  .reel-flange{fill:#f2efe7;}
+  .reel-flange-ring{fill:none;stroke:rgba(0,0,0,.14);stroke-width:1.4;}
+  .reel-hole{fill:#26211b;}
+  .reel-hub{fill:#e6e2d7;}
+  .reel-tooth{fill:#c9c4b6;}
+  .reel-center{fill:#b6b1a4;stroke:#26211b;stroke-width:3;}
+
+  /* ribbed bottom */
+  .bottom{position:absolute;bottom:14px;left:30px;right:30px;height:56px;border-radius:8px;z-index:1;overflow:hidden;}
+  .ridges{position:absolute;inset:0;background:repeating-linear-gradient(90deg, rgba(0,0,0,.10) 0 2px, transparent 2px 6px);}
+  .notch{position:absolute;left:50%;bottom:-2px;transform:translateX(-50%);width:54%;height:38px;
+    border-radius:7px 7px 0 0;display:flex;align-items:center;justify-content:space-around;padding:0 16px;
+    background:rgba(0,0,0,.34);clip-path:polygon(8% 0,92% 0,100% 100%,0 100%);}
+  .cap-hole{width:11px;height:11px;border-radius:50%;background:rgba(0,0,0,.55);box-shadow:inset 0 1px 2px rgba(0,0,0,.6);}
+  .side-badge{position:absolute;left:6px;bottom:4px;font-family:"DM Sans";font-weight:700;font-size:13px;
+    width:24px;height:24px;display:grid;place-items:center;border:1.5px solid currentColor;border-radius:4px;opacity:.7;}
+
+  /* ===== TAPED PAPER NOTE (customizable zone) ===== */
+  .note{position:absolute;top:30px;left:64px;right:64px;min-height:70px;z-index:5;padding:13px 18px 15px;
+    display:flex;flex-direction:column;justify-content:center;}
+  .note-side{position:absolute;top:8px;right:14px;font-family:"JetBrains Mono",monospace;font-weight:700;font-size:10px;letter-spacing:.12em;}
+  .note-meta{position:absolute;top:9px;left:14px;font-family:"JetBrains Mono",monospace;font-size:8px;letter-spacing:.16em;opacity:.65;}
+  .note-title{font-family:"Caveat",cursive;font-weight:700;font-size:34px;line-height:.95;text-align:center;margin-top:6px;}
+  .note-sub{font-family:"Caveat",cursive;font-weight:500;font-size:18px;text-align:center;opacity:.7;margin-top:2px;}
+  .washi{position:absolute;width:62px;height:23px;z-index:6;}
+  .washi.a{top:-11px;left:-12px;transform:rotate(-38deg);}
+  .washi.b{bottom:-11px;right:-12px;transform:rotate(-38deg);}
+
+  /* ============ VARIANT 1 · CRYSTAL (clear glass) ============ */
+  .crystal-surface{background:radial-gradient(120% 90% at 50% 0%, #efe3cf, #ddccae 70%, #cbb78f);}
+  .crystal .shell{
+    background:linear-gradient(158deg, rgba(255,255,255,.62), rgba(244,240,250,.30) 45%, rgba(226,220,234,.42));
+    box-shadow:inset 0 2px 3px rgba(255,255,255,.8), inset 0 -3px 6px rgba(120,110,130,.3), inset 0 0 0 1px rgba(255,255,255,.6);
+    backdrop-filter:blur(1px);}
+  .crystal .shell::before{content:"";position:absolute;inset:0;z-index:5;pointer-events:none;border-radius:16px;
+    background:linear-gradient(120deg, rgba(255,255,255,.55) 0%, transparent 18%, transparent 70%, rgba(255,255,255,.35) 100%);}
+  .crystal .brand-model,.crystal .brand-logo,.crystal .brand-tri{color:#4a4a52;}
+  .crystal .brand-type{color:#4a4a52;}
+  .crystal .window{background:linear-gradient(160deg, rgba(60,52,46,.30), rgba(34,28,24,.5));box-shadow:inset 0 0 0 1px rgba(255,255,255,.4);}
+  .crystal .tape-pack.left{background:radial-gradient(circle at 50% 50%, #3a2c1f 32%, #5a4632 33%, #4a3826 100%);}
+  .crystal .tape-pack.right{background:radial-gradient(circle at 50% 50%, #3a2c1f 36%, #5a4632 37%, #4a3826 100%);}
+  .crystal .bottom{background:linear-gradient(180deg, rgba(255,255,255,.30), rgba(210,202,214,.34));box-shadow:inset 0 0 0 1px rgba(255,255,255,.4);}
+  .crystal .side-badge{color:#4a4a52;}
+  .crystal .screw{background:radial-gradient(circle at 35% 30%, #fff, transparent 60%), #d8d2c4;}
+  /* kraft torn note */
+  .crystal .note{background:#d9c197;border-radius:2px;
+    box-shadow:0 8px 16px rgba(40,28,12,.32), inset 0 0 22px rgba(150,120,70,.25);
+    transform:rotate(-1.6deg);
+    -webkit-mask:radial-gradient(7px at 7px 50%, transparent 96%, #000) -1px 0/100% 9px;
+    clip-path:polygon(0 6%,3% 0,12% 4%,24% 0,40% 5%,56% 1%,72% 5%,88% 0,97% 4%,100% 9%,100% 92%,96% 100%,84% 95%,68% 100%,52% 96%,36% 100%,20% 95%,8% 100%,2% 95%,0 90%);}
+  .crystal .note-title{color:#5a3d1c;}
+  .crystal .note-side,.crystal .note-meta{color:#7a5a2e;}
+  .crystal .washi.a{background:linear-gradient(#e8a03088,#c77f1e88);box-shadow:0 1px 3px rgba(0,0,0,.2);}
+  .crystal .washi.b{background:linear-gradient(#7ba68a99,#5e8a6e99);box-shadow:0 1px 3px rgba(0,0,0,.2);}
+
+  /* ============ VARIANT 2 · SMOKY (charcoal hi-fi) ============ */
+  .smoky-surface{background:radial-gradient(120% 90% at 50% 0%, #34343c, #232328 70%, #161619);}
+  .smoky .shell{background:linear-gradient(165deg, #3a3a42, #232327 55%, #19191d);
+    box-shadow:inset 0 2px 2px rgba(255,255,255,.10), inset 0 0 0 1px rgba(255,255,255,.05);}
+  .smoky .shell::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:radial-gradient(140% 70% at 50% -10%, rgba(255,255,255,.07), transparent 55%);}
+  .smoky .brand-model{color:#e9e9ec;} .smoky .brand-type{color:#a9a9b2;} .smoky .brand-tri{color:#e9e9ec;}
+  .smoky .brand-logo{color:#e9e9ec;}
+  .smoky .window{background:linear-gradient(160deg, #1c1c20, #0c0c0e);box-shadow:inset 0 2px 8px rgba(0,0,0,.7);}
+  .smoky .tape-pack.left{background:radial-gradient(circle at 50% 50%, #1a1a1d 30%, #2c2c30 31%, #1f1f22 100%);}
+  .smoky .tape-pack.right{background:radial-gradient(circle at 50% 50%, #1a1a1d 34%, #2c2c30 35%, #1f1f22 100%);}
+  .smoky .bottom{background:linear-gradient(180deg, #2c2c31, #19191d);}
+  .smoky .side-badge{color:#bdbdc4;}
+  .smoky .screw{background:radial-gradient(circle at 35% 30%, #aaa, transparent 55%), #45454b;}
+  /* clean white index card, scotch tape */
+  .smoky .note{background:linear-gradient(180deg,#fdfdfb,#f1f1ec);border-radius:3px;transform:rotate(-0.8deg);
+    box-shadow:0 10px 22px rgba(0,0,0,.4);}
+  .smoky .note::after{content:"";position:absolute;left:0;top:50%;right:0;height:1px;background:rgba(0,0,0,.12);}
+  .smoky .note-title{font-family:"Shadows Into Light",cursive;color:#2747c4;font-weight:400;font-size:30px;transform:rotate(-0.6deg);}
+  .smoky .note-side{color:#222;} .smoky .note-meta{color:#555;}
+  .smoky .washi{background:rgba(220,225,230,.45);box-shadow:inset 0 0 0 1px rgba(255,255,255,.4);height:20px;}
+
+  /* ============ VARIANT 3 · AMBER (caramel wax) ============ */
+  .amber-surface{background:radial-gradient(120% 90% at 50% 0%, #3a2410, #271708 70%, #1a0f05);}
+  .amber .shell{background:linear-gradient(160deg, #f0ad44, #d68a23 52%, #a8631400);
+    background:linear-gradient(160deg, #f0ad44, #d68a23 55%, #9a5d14);
+    box-shadow:inset 0 2px 3px rgba(255,240,210,.6), inset 0 -3px 8px rgba(120,70,10,.45), inset 0 0 0 1px rgba(255,220,160,.4);}
+  .amber .shell::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:linear-gradient(118deg, rgba(255,250,235,.5) 0%, transparent 24%);}
+  .amber .brand-model,.amber .brand-logo,.amber .brand-tri{color:#3a2208;}
+  .amber .brand-type{color:#5a3a12;}
+  .amber .window{background:linear-gradient(160deg, #3a2410, #1f1407);box-shadow:inset 0 2px 8px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,210,150,.25);}
+  .amber .tape-pack.left{background:radial-gradient(circle at 50% 50%, #2a1a0c 30%, #46301a 31%, #311f0f 100%);}
+  .amber .tape-pack.right{background:radial-gradient(circle at 50% 50%, #2a1a0c 34%, #46301a 35%, #311f0f 100%);}
+  .amber .reel-flange{fill:#f6ecd6;} .amber .reel-hub{fill:#ece0c4;} .amber .reel-tooth{fill:#d6c8a4;}
+  .amber .bottom{background:linear-gradient(180deg, #e09d35, #b67518);box-shadow:inset 0 0 0 1px rgba(255,220,160,.3);}
+  .amber .side-badge{color:#3a2208;}
+  .amber .screw{background:radial-gradient(circle at 35% 30%, #fff, transparent 60%), #f3e3c2;}
+  /* torn lined notebook paper, diagonal washi */
+  .amber .note{background:
+      repeating-linear-gradient(180deg, transparent 0 21px, rgba(70,110,180,.32) 21px 22px),
+      linear-gradient(#fffdf6,#fbf4e2);
+    background-position:0 6px,0 0;border-radius:2px;transform:rotate(1.8deg);
+    box-shadow:0 9px 18px rgba(30,16,4,.4);
+    clip-path:polygon(0 4%,6% 0,16% 5%,30% 1%,46% 6%,60% 1%,74% 6%,88% 1%,97% 5%,100% 10%,100% 90%,95% 100%,82% 95%,66% 100%,50% 95%,34% 100%,18% 95%,7% 100%,2% 96%,0 88%);}
+  .amber .note::before{content:"";position:absolute;left:26px;top:0;bottom:0;width:1.5px;background:rgba(200,70,60,.5);}
+  .amber .note-title{font-family:"Permanent Marker",cursive;color:#2a1a0a;font-size:24px;line-height:1.05;}
+  .amber .note-sub{font-family:"Permanent Marker",cursive;font-size:13px;color:#5a3d1c;}
+  .amber .note-side,.amber .note-meta{color:#5a3d1c;}
+  .amber .washi.a{background:linear-gradient(#dc6a3acc,#b94e22cc);}
+  .amber .washi.b{background:linear-gradient(#e8a030cc,#c77f1ecc);}
+
+  /* spec strip colors per stage */
+  .crystal-surface ~ .spec, .stage.crystal-stage .spec{color:#6b5132;}
+  .stage.smoky-stage .spec{color:#9a9aa4;}
+  .stage.amber-stage .spec{color:#caa264;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="cassettes.jsx"></script>
+<script type="text/babel">
+const { DesignCanvas, DCSection, DCArtboard } = window;
+
+function Stage({ klass, surface, children, specs }) {
+  return (
+    <div className={"stage " + klass}>
+      <div className={"surface " + surface} />
+      {children}
+      <div className="spec">{specs.map((s, i) => <span key={i}><b>{s[0]}</b> {s[1]}</span>)}</div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <DesignCanvas>
+      <DCSection id="mixtapes" title="Mixtape Designs" subtitle="Glass case · taped paper note · 3 directions to finalize">
+        <DCArtboard id="crystal" label="01 · Crystal Clear" width={600} height={430}>
+          <Stage klass="crystal-stage" surface="crystal-surface"
+            specs={[["Shell", "clear crystal"], ["Label", "kraft · torn + washi"], ["Hand", "Caveat"]]}>
+            <Cassette variant="crystal" side="SIDE A" title="our long drive home" subtitle="♡ vol. three"
+              model="CR-90" typeline={"TYPE II · HIGH\nCrO₂ POSITION"} brand="WAX&GRAIN" />
+          </Stage>
+        </DCArtboard>
+
+        <DCArtboard id="smoky" label="02 · Smoky Hi-Fi" width={600} height={430}>
+          <Stage klass="smoky-stage" surface="smoky-surface"
+            specs={[["Shell", "smoky charcoal"], ["Label", "index card · scotch tape"], ["Hand", "blue ballpoint"]]}>
+            <Cassette variant="smoky" side="SIDE A" title="Bodacious Mixtape 3"
+              model="HS-F90" typeline={"TYPE I · NORMAL\n120µs EQ"} brand="WAX&GRAIN" />
+          </Stage>
+        </DCArtboard>
+
+        <DCArtboard id="amber" label="03 · Amber Wax" width={600} height={430}>
+          <Stage klass="amber-stage" surface="amber-surface"
+            specs={[["Shell", "caramel amber"], ["Label", "lined paper · diagonal tape"], ["Hand", "marker"]]}>
+            <Cassette variant="amber" side="SIDE A" title="late summer, 2026" subtitle="for you, always"
+              model="WG-60" typeline={"TYPE I · NORMAL\nFERRIC OXIDE"} brand="WAX&GRAIN" />
+          </Stage>
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

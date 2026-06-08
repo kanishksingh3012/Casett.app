@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cassette — Dark Theme Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Reenie+Beanie&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0B0B0C; --panel:#161618; --panel2:#1E1E21;
+    --glass:rgba(255,255,255,.055); --glass-strong:rgba(255,255,255,.09);
+    --hair:rgba(255,255,255,.09); --hair-top:rgba(255,255,255,.16);
+    --t1:#F4F4F2; --t2:#9A9AA0; --t3:#65656B;
+    --amber:#E8A030; --rec:#FF453A; --lcd:#7FE0A8;
+    --ui:"Space Grotesk",system-ui,sans-serif; --body:"DM Sans",sans-serif;
+    --mono:"JetBrains Mono",monospace; --hand:"Reenie Beanie",cursive;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{background:
+      radial-gradient(120% 90% at 80% -5%, rgba(232,160,48,.07), transparent 55%),
+      radial-gradient(90% 70% at 10% 110%, rgba(127,224,168,.05), transparent 60%),
+      #08080a;
+    display:flex;align-items:center;justify-content:center;gap:60px;flex-wrap:wrap;
+    font-family:var(--body);color:var(--t1);padding:48px 24px;min-height:100%;}
+
+  /* side caption */
+  .caption{max-width:300px;}
+  .caption .ey{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--amber);margin-bottom:18px;}
+  .caption h1{font-family:var(--ui);font-weight:700;font-size:40px;line-height:1.05;letter-spacing:-.02em;margin-bottom:16px;}
+  .caption p{color:var(--t2);font-size:15px;line-height:1.65;margin-bottom:18px;}
+  .caption .chips{display:flex;flex-direction:column;gap:9px;}
+  .caption .chip{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--t2);}
+  .caption .chip .sw{width:16px;height:16px;border-radius:5px;border:1px solid var(--hair);}
+  .caption .chip code{font-family:var(--mono);font-size:12px;color:var(--t1);}
+
+  /* ===== device ===== */
+  .device{width:392px;height:844px;border-radius:56px;background:#000;
+    padding:5px;box-shadow:0 0 0 2px #2a2a2e, 0 40px 90px rgba(0,0,0,.6), inset 0 0 2px rgba(255,255,255,.2);flex:none;}
+  .screen{width:100%;height:100%;border-radius:51px;overflow:hidden;background:var(--bg);position:relative;}
+  .island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:120px;height:34px;background:#000;border-radius:20px;z-index:40;}
+
+  .statusbar{height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 8px;
+    font-family:var(--ui);font-weight:600;font-size:15px;}
+  .statusbar .right{display:flex;align-items:center;gap:7px;}
+  .statusbar .right .ic{width:18px;height:11px;border-radius:2px;background:var(--t1);opacity:.92;}
+  .statusbar .right .bat{width:24px;height:12px;border:1.5px solid var(--t1);border-radius:3px;position:relative;opacity:.92;}
+  .statusbar .right .bat::after{content:"";position:absolute;inset:2px;right:6px;background:var(--t1);border-radius:1px;}
+
+  .content{padding:6px 20px 0;height:calc(100% - 54px);display:flex;flex-direction:column;}
+
+  /* top glass bar */
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+  .nav-glass{width:40px;height:40px;border-radius:50%;background:var(--glass);border:1px solid var(--hair);
+    backdrop-filter:blur(14px);display:grid;place-items:center;color:var(--t1);font-size:20px;}
+  .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--t3);white-space:nowrap;}
+  .share-glass{height:40px;padding:0 16px;border-radius:30px;background:var(--glass);border:1px solid var(--hair-top);
+    backdrop-filter:blur(14px);display:flex;align-items:center;gap:8px;font-family:var(--ui);font-weight:600;font-size:13px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
+  .share-glass .dot{width:7px;height:7px;border-radius:50%;background:var(--amber);}
+
+  /* ===== smoky cassette (detailed) ===== */
+  .cass{position:relative;width:100%;aspect-ratio:1.62/1;border-radius:16px;
+    background:linear-gradient(165deg,#3a3a42,#232327 55%,#19191d);
+    box-shadow:0 18px 40px rgba(0,0,0,.55), inset 0 2px 2px rgba(255,255,255,.10), inset 0 0 0 1px rgba(255,255,255,.05);
+    padding:12px 14px;overflow:hidden;display:flex;flex-direction:column;}
+  .cass::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(140% 70% at 50% -10%, rgba(255,255,255,.08), transparent 55%);}
+  .scr{position:absolute;width:9px;height:9px;border-radius:50%;z-index:4;
+    background:radial-gradient(circle at 35% 30%,#aaa,transparent 55%),#45454b;box-shadow:inset 0 0 0 1px rgba(0,0,0,.4);}
+  .scr.tl{left:8px;top:8px;}.scr.tr{right:8px;top:8px;}.scr.bl{left:8px;bottom:8px;}.scr.br{right:8px;bottom:8px;}
+
+  .c-brand{display:flex;align-items:flex-start;justify-content:space-between;padding:0 16px;margin-bottom:7px;position:relative;z-index:3;}
+  .c-brand .bl{display:flex;align-items:flex-start;gap:6px;}
+  .c-brand .tri{color:#e9e9ec;font-size:8px;margin-top:3px;}
+  .c-brand .model{font-family:var(--ui);font-weight:700;font-size:12.5px;color:#e9e9ec;letter-spacing:.02em;line-height:1;}
+  .c-brand .model small{display:block;font-family:var(--mono);font-weight:400;font-size:6.5px;letter-spacing:.05em;color:#9a9aa2;margin-top:3px;line-height:1.25;}
+  .c-brand .logo{font-family:var(--ui);font-weight:700;font-size:10px;letter-spacing:.05em;color:#e9e9ec;margin-top:1px;}
+
+  /* taped index card */
+  .c-label{position:relative;z-index:3;margin:0 16px 9px;background:linear-gradient(180deg,#fdfdfb,#f1f1ec);
+    border-radius:3px;height:44px;box-shadow:0 8px 16px rgba(0,0,0,.45);transform:rotate(-.6deg);}
+  .c-label .hw{position:absolute;left:10px;right:10px;top:50%;transform:translateY(-50%) rotate(-.6deg);text-align:center;
+    font-family:var(--hand);color:#2747c4;font-size:28px;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .tape{position:absolute;width:46px;height:15px;background:rgba(214,222,230,.42);border:1px solid rgba(255,255,255,.4);
+    box-shadow:0 1px 2px rgba(0,0,0,.18);z-index:5;}
+  .tape.l{top:-6px;left:-9px;transform:rotate(-34deg);}
+  .tape.r{top:-6px;right:-9px;transform:rotate(34deg);}
+
+  /* window + reels */
+  .c-window{position:relative;z-index:2;margin:0 16px;flex:1;min-height:74px;border-radius:7px;overflow:hidden;
+    background:linear-gradient(160deg,#1c1c20,#0c0c0e);box-shadow:inset 0 2px 8px rgba(0,0,0,.7);}
+  .c-window .gloss{position:absolute;inset:0;z-index:3;pointer-events:none;
+    background:linear-gradient(118deg, rgba(255,255,255,.10) 0%, transparent 22%);}
+  .tape-pack{position:absolute;top:50%;border-radius:50%;z-index:0;}
+  .tape-pack.l{left:26%;width:78px;height:78px;margin:-39px 0 0 -39px;background:radial-gradient(circle at 50% 50%,#1a1a1d 30%,#2c2c30 31%,#1f1f22 100%);}
+  .tape-pack.r{left:74%;width:66px;height:66px;margin:-33px 0 0 -33px;background:radial-gradient(circle at 50% 50%,#1a1a1d 34%,#2c2c30 35%,#1f1f22 100%);}
+  .reel{position:absolute;top:50%;width:48px;height:48px;margin:-24px 0 0 -24px;z-index:2;}
+  .reel.l{left:26%;}.reel.r{left:74%;}
+  .bridge{position:absolute;top:50%;left:38%;right:38%;height:30px;transform:translateY(-50%);z-index:1;
+    background:repeating-linear-gradient(90deg, rgba(0,0,0,.18) 0 1px, transparent 1px 6px);opacity:.5;}
+
+  /* ridged "grill" bottom + capstan notch */
+  .c-bottom{position:relative;z-index:2;margin:9px 16px 0;height:28px;border-radius:6px;overflow:hidden;
+    background:linear-gradient(180deg,#2c2c31,#19191d);}
+  .c-bottom .ridges{position:absolute;inset:0;background:repeating-linear-gradient(90deg, rgba(0,0,0,.18) 0 2px, transparent 2px 6px);}
+  .c-bottom .notch{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:50%;height:21px;
+    background:rgba(0,0,0,.45);clip-path:polygon(8% 0,92% 0,100% 100%,0 100%);
+    display:flex;align-items:center;justify-content:space-around;padding:0 16px;}
+  .c-bottom .hole{width:7px;height:7px;border-radius:50%;background:rgba(0,0,0,.6);box-shadow:inset 0 1px 1px rgba(0,0,0,.7);}
+  .c-bottom .side-badge{position:absolute;left:5px;top:50%;transform:translateY(-50%);width:18px;height:18px;
+    border:1.4px solid #bdbdc4;border-radius:4px;display:grid;place-items:center;font-family:var(--ui);font-weight:700;font-size:10px;color:#bdbdc4;opacity:.85;}
+
+  /* ===== control deck (glass) ===== */
+  .deck{margin:auto -8px 0;background:var(--glass);border:1px solid var(--hair);border-top-color:var(--hair-top);
+    border-radius:26px;backdrop-filter:blur(20px);padding:16px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.1), 0 -10px 30px rgba(0,0,0,.3);}
+
+  .lcd{background:#0c0f0d;border-radius:12px;border:1px solid rgba(127,224,168,.14);
+    padding:11px 14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;
+    box-shadow:inset 0 2px 10px rgba(0,0,0,.7);}
+  .lcd .stat{font-family:var(--mono);font-weight:500;font-size:14px;letter-spacing:.12em;color:var(--lcd);flex-shrink:0;
+    text-shadow:0 0 8px rgba(127,224,168,.5);display:flex;align-items:center;gap:9px;white-space:nowrap;}
+  .lcd .stat .rd{width:8px;height:8px;border-radius:50%;background:var(--rec);box-shadow:0 0 8px var(--rec);}
+  .lcd .meta{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:rgba(127,224,168,.4);}
+
+  /* original glass transport — NOT keycaps */
+  .transport{display:flex;align-items:center;justify-content:center;gap:14px;}
+  .tbtn{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--t1);
+    background:var(--glass-strong);border:1px solid var(--hair-top);backdrop-filter:blur(14px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.14);transition:transform .12s;}
+  .tbtn:active{transform:scale(.94);}
+  .tbtn svg{width:19px;height:19px;}
+  .tbtn.play{width:64px;height:64px;color:#1c1209;border-color:rgba(255,255,255,.25);
+    background:linear-gradient(180deg,#f2b850,#E8A030);
+    box-shadow:0 8px 20px rgba(232,160,48,.35), inset 0 1px 0 rgba(255,255,255,.45);}
+  .tbtn.play svg{width:25px;height:25px;margin-left:2px;}
+  .tbtn.rec{color:#fff;border-color:rgba(255,130,120,.4);
+    background:radial-gradient(circle at 50% 32%,#ff6a60,#e23b32);
+    box-shadow:0 6px 16px rgba(255,69,58,.38), inset 0 1px 0 rgba(255,255,255,.28);}
+  .tbtn.rec .rdot{width:13px;height:13px;border-radius:50%;background:#fff;}
+
+  .divider{height:1px;background:var(--hair);margin:16px 2px;}
+  .sec-lbl{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--t2);
+    display:flex;align-items:center;gap:7px;margin-bottom:12px;}
+  .sec-lbl .i{width:13px;height:13px;border:1.4px solid var(--t2);border-radius:3px;}
+  .swatches{display:flex;gap:0;justify-content:space-between;}
+  .swatches .s{width:34px;height:34px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .12s;}
+  .swatches .s:active{transform:scale(.9);}
+  .swatches .s.on{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.12);}
+  .home-ind{width:130px;height:5px;border-radius:3px;background:rgba(255,255,255,.3);margin:10px auto 8px;}
+</style>
+</head>
+<body>
+
+<div class="caption">
+  <div class="ey">Theme Preview · Dark</div>
+  <h1>Studio Dark, Liquid&nbsp;Glass.</h1>
+  <p>The approved direction, refined: matte near-black surfaces, frosted glass chrome, and the fully-detailed Smoky Hi-Fi cassette as hero — taped index card, ridged grill, A-side badge. Transport is our own glass control deck, not borrowed keycaps.</p>
+  <div class="chips">
+    <div class="chip"><span class="sw" style="background:#0B0B0C"></span><code>#0B0B0C</code> base</div>
+    <div class="chip"><span class="sw" style="background:#E8A030"></span><code>#E8A030</code> amber · primary</div>
+    <div class="chip"><span class="sw" style="background:#FF453A"></span><code>#FF453A</code> record only</div>
+    <div class="chip"><span class="sw" style="background:rgba(255,255,255,.08)"></span>Space Grotesk · JetBrains Mono</div>
+  </div>
+</div>
+
+<div class="device">
+  <div class="screen">
+    <div class="island"></div>
+
+    <div class="statusbar">
+      <span>9:41</span>
+      <span class="right"><span class="ic" style="width:17px"></span><span class="ic" style="width:15px"></span><span class="bat"></span></span>
+    </div>
+
+    <div class="content">
+      <div class="topbar">
+        <div class="nav-glass">‹</div>
+        <div class="eyebrow">New Tape</div>
+        <div class="share-glass"><span class="dot"></span>Share</div>
+      </div>
+
+      <!-- detailed smoky cassette -->
+      <div class="cass">
+        <span class="scr tl"></span><span class="scr tr"></span><span class="scr bl"></span><span class="scr br"></span>
+        <div class="c-brand">
+          <div class="bl"><span class="tri">▸</span><span class="model">FROM · ALEX<small>TYPE I (NORMAL) · 120µs EQ</small></span></div>
+          <span class="logo">HI-FI STEREO</span>
+        </div>
+        <div class="c-label">
+          <span class="tape l"></span><span class="tape r"></span>
+          <span class="hw">thinking of you lately</span>
+        </div>
+        <div class="c-window">
+          <div class="gloss"></div>
+          <div class="tape-pack l"></div><div class="tape-pack r"></div>
+          <svg class="reel l" viewBox="0 0 120 120"></svg>
+          <svg class="reel r" viewBox="0 0 120 120"></svg>
+          <div class="bridge"></div>
+        </div>
+        <div class="c-bottom">
+          <div class="ridges"></div>
+          <div class="notch"><span class="hole"></span><span class="hole"></span><span class="hole"></span><span class="hole"></span></div>
+          <span class="side-badge">A</span>
+        </div>
+      </div>
+
+      <!-- our glass control deck -->
+      <div class="deck">
+        <div class="lcd">
+          <span class="stat"><span class="rd"></span>REC · 0:18 / 1:30</span>
+          <span class="meta">CREATOR MODE</span>
+        </div>
+        <div class="transport">
+          <div class="tbtn" aria-label="rewind"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 6 4 12l7 6zM20 6l-7 6 7 6z"/></svg></div>
+          <div class="tbtn" aria-label="stop"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg></div>
+          <div class="tbtn play" aria-label="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 5v14l11-7z"/></svg></div>
+          <div class="tbtn rec" aria-label="record"><span class="rdot"></span></div>
+          <div class="tbtn" aria-label="flip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 14-5l2 2M20 12a8 8 0 0 1-14 5l-2-2"/><path d="M20 4v5h-5M4 20v-5h5"/></svg></div>
+        </div>
+        <div class="divider"></div>
+        <div class="sec-lbl"><span class="i"></span>Shell color <span style="margin-left:auto;color:var(--t3);letter-spacing:.12em;font-size:8px;text-transform:none">preview composite · not a real screen</span></div>
+        <div class="swatches">
+          <span class="s on" style="background:#3a3a42"></span>
+          <span class="s" style="background:#1E1E21"></span>
+          <span class="s" style="background:#f4f4f2"></span>
+          <span class="s" style="background:#7B2FBE"></span>
+          <span class="s" style="background:#16607a"></span>
+          <span class="s" style="background:#1f7a5e"></span>
+          <span class="s" style="background:#a83b6b"></span>
+          <span class="s" style="background:#E8A030"></span>
+        </div>
+        <div class="home-ind"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function reelInner(){
+    let s='<circle cx="60" cy="60" r="58" fill="#f2efe7"/><circle cx="60" cy="60" r="57" fill="none" stroke="rgba(0,0,0,.14)" stroke-width="1.4"/>';
+    for(let i=0;i<16;i++){const a=i/16*Math.PI*2;const x=(60+41*Math.cos(a)).toFixed(1);const y=(60+41*Math.sin(a)).toFixed(1);s+=`<circle cx="${x}" cy="${y}" r="4.4" fill="#26211b"/>`;}
+    s+='<circle cx="60" cy="60" r="29" fill="#e6e2d7"/>';
+    for(let i=0;i<6;i++){const a=i/6*Math.PI*2;const x=60+18*Math.cos(a);const y=60+18*Math.sin(a);const deg=a*180/Math.PI+90;s+=`<rect x="${(x-3).toFixed(1)}" y="${(y-6).toFixed(1)}" width="6" height="12" rx="1.5" transform="rotate(${deg.toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)})" fill="#c9c4b6"/>`;}
+    s+='<circle cx="60" cy="60" r="11" fill="#b6b1a4" stroke="#26211b" stroke-width="3"/>';
+    return s;
+  }
+  document.querySelectorAll('.reel').forEach(r=>r.innerHTML=reelInner());
+
+  function fit(){
+    const d=document.querySelector('.device');
+    const scale=Math.min(1,(window.innerHeight-60)/844);
+    d.style.transform=`scale(${scale})`;d.style.transformOrigin='center';
+  }
+  fit(); window.addEventListener('resize',fit);
+</script>
+</body>
+</html>

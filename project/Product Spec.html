@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cassette — Product Spec v1.1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,500&family=DM+Sans:wght@400;500;600;700&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --espresso:#2C1A0E;--amber:#E8A030;--amber-deep:#C77F1E;--danger:#DC2626;
+    --bg:#F3E9D8;--surface:#FCF7ED;--surface-2:#EADCC4;--text-2:#6B5744;--text-3:#9A856B;--border:#DAC8AC;--border-s:#C3AC8A;
+    --display:"Playfair Display",Georgia,serif;--body:"DM Sans",system-ui,sans-serif;--hand:"Caveat",cursive;--mono:"JetBrains Mono",monospace;
+    --elev-1:0 1px 2px rgba(44,26,14,.10),0 2px 8px rgba(44,26,14,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--body);color:var(--espresso);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(120% 80% at 50% -10%, rgba(232,160,48,.10), transparent 60%);}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 32px;}
+
+  header.mast{padding:88px 0 56px;border-bottom:2px solid var(--espresso);}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--amber-deep);display:flex;align-items:center;gap:12px;}
+  .eyebrow::before{content:"";width:28px;height:2px;background:var(--amber);}
+  h1{font-family:var(--display);font-weight:900;font-size:clamp(42px,7vw,84px);line-height:.96;letter-spacing:-.02em;margin:22px 0 16px;}
+  h1 em{font-style:italic;font-weight:500;color:var(--amber-deep);}
+  .lede{font-size:19px;max-width:60ch;color:var(--text-2);}
+  .pill-meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px;}
+  .pill-meta span{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;border:1.5px solid var(--border-s);border-radius:30px;padding:6px 13px;color:var(--text-2);}
+
+  section{padding:56px 0;border-bottom:1px solid var(--border);}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:28px;}
+  .sec-num{font-family:var(--mono);font-size:13px;color:var(--amber-deep);font-weight:700;}
+  .sec-title{font-family:var(--display);font-weight:700;font-size:32px;letter-spacing:-.01em;}
+
+  .statement{font-family:var(--display);font-size:26px;line-height:1.4;font-weight:600;max-width:30ch;}
+  .statement em{font-style:italic;color:var(--amber-deep);}
+  .twocol{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:start;}
+  @media(max-width:760px){.twocol{grid-template-columns:1fr;}}
+  .twocol p{font-size:16px;color:var(--text-2);margin-bottom:14px;}
+  .twocol p strong{color:var(--espresso);}
+
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+  @media(max-width:760px){.cards{grid-template-columns:1fr;}}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;box-shadow:var(--elev-1);}
+  .card .k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber-deep);}
+  .card h3{font-family:var(--display);font-weight:700;font-size:21px;margin:8px 0 8px;}
+  .card p{font-size:14.5px;color:var(--text-2);}
+  .card p b{color:var(--espresso);}
+
+  table{width:100%;border-collapse:collapse;font-size:14.5px;}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+  th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);font-weight:700;}
+  td:first-child{font-weight:600;white-space:nowrap;}
+  td .num{font-family:var(--mono);color:var(--amber-deep);font-size:12px;margin-right:8px;}
+  .tagcell{font-family:var(--mono);font-size:11px;color:var(--text-3);}
+  .star{color:var(--amber-deep);}
+
+  .flows{display:grid;grid-template-columns:1fr 1fr;gap:30px;}
+  @media(max-width:760px){.flows{grid-template-columns:1fr;}}
+  .flow h3{font-family:var(--display);font-size:22px;font-weight:700;margin-bottom:14px;}
+  .step{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-top:1px dashed var(--border-s);font-size:15px;}
+  .step:first-of-type{border-top:none;}
+  .step .s{font-family:var(--mono);font-size:11px;font-weight:700;color:#fff;background:var(--amber-deep);min-width:22px;height:22px;border-radius:50%;display:grid;place-items:center;margin-top:2px;}
+
+  .removed{display:flex;flex-wrap:wrap;gap:10px;}
+  .removed span{font-family:var(--body);font-size:14px;color:var(--text-2);background:var(--surface-2);border:1px dashed var(--border-s);border-radius:8px;padding:8px 13px;}
+  .removed span s{color:var(--danger);opacity:.7;}
+
+  footer{padding:48px 0 80px;text-align:center;}
+  footer .hand{font-family:var(--hand);font-weight:700;font-style:italic;font-size:22px;color:var(--amber-deep);margin-bottom:10px;}
+  footer .fp{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-3);}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap">
+    <div class="eyebrow">Cassette · Product Spec v1.1</div>
+    <h1>It plays your <em>voice</em>,<br />then your song.</h1>
+    <p class="lede">A personal audio-message app wearing cassette-tape clothes. The tape is the vessel — the message is the content. This document consolidates the product decisions and supersedes earlier specs where they conflict.</p>
+    <div class="pill-meta">
+      <span>Audio-message app</span><span>iOS 26 · web-first recipient</span><span>9 screens · 2 flows</span><span>No Seal · One song</span><span>June 2026</span>
+    </div>
+  </div>
+</header>
+
+<!-- 01 WHAT THIS IS -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">01</span><h2 class="sec-title">What this product is</h2></div>
+    <div class="twocol">
+      <div class="statement">Record your voice, attach <em>one song</em> that holds the feeling, name it, customize the shell, send it.</div>
+      <div>
+        <p>This is <strong>not a mixtape app</strong>. It is a personal audio message app using cassette aesthetics. "Mixtape" is a reference point for the look, not the function.</p>
+        <p>The recipient receives a beautiful cassette that plays <strong>your voice</strong> and <strong>your chosen song</strong> — voice first, song second. That complete message is the whole product.</p>
+        <p>Everything below removes ambiguity from the earlier multi-song, Seal-driven, app-gated concept and replaces it with a single, honest, end-to-end experience designed as a complete product from day one.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 KEY DECISIONS -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">02</span><h2 class="sec-title">Key decisions</h2></div>
+    <div class="cards">
+      <div class="card"><div class="k">Audio · no silent tapes</div><h3>Spotify preview, day one</h3><p>Every attached song uses Spotify's free <b>preview_url</b> — a 30-second clip with <b>no OAuth and no paywall</b> on either end. The creator searches, attaches; the recipient hears it on Side B. No streaming account required from anyone.</p></div>
+      <div class="card"><div class="k">Sides</div><h3>Side A = voice · Side B = song</h3><p>Voice plays first; the recipient flips to Side B for the song. <b>No voice note?</b> The song moves to Side A, Side B stays blank, and the flip affordance disappears entirely — no empty side to confuse anyone. Voice is capped at a hard <b>0:90</b>.</p></div>
+      <div class="card"><div class="k">Identity</div><h3>No Seal — your voice is you</h3><p>The Seal system is removed. The voice note already carries identity. For visual attribution the sender's name sits in the cassette header: small uppercase <b>"FROM"</b> beside the name in the model-number font. Decorative, unambiguous, zero extra setup.</p></div>
+      <div class="card"><div class="k">The label</div><h3>A title, not a letter</h3><p>The label holds a short <b>4–5 word title</b> ("thinking of you lately"), rendered in a handwritten font on a strip of <b>translucent paper</b> — light cream, black text, deliberately high-contrast and accessible. There is no separate notes or message field.</p></div>
+      <div class="card"><div class="k">Home</div><h3>One action</h3><p>Empty Home is a single centered <b>(+)</b> with one line of supporting text. No library grid, no identity prompt, no competing CTAs. The first thing a new user can do is make a tape. Library appears <b>only after</b> the first tape is saved.</p></div>
+      <div class="card"><div class="k">Library</div><h3>Sent + received keepsakes</h3><p>One unified collection of tapes you've made and tapes you've been sent — a keepsake shelf, not a drafts folder. Saving a <b>received</b> tape is the natural prompt to download the app and create an account.</p></div>
+      <div class="card"><div class="k">Account &amp; sync</div><h3>Magic link, deferred</h3><p>Passwordless email login, optional, triggered only after <b>2–3 tapes</b> exist. Dismiss it and the library stays local with a low-key "sync across devices" banner. Shared tapes are <b>always server-side</b> — the link works regardless of device or login.</p></div>
+      <div class="card"><div class="k">Cassette literacy</div><h3>Retro look, universal controls</h3><p>Every control is a standard icon (▶ play, ↩ rewind) with a text label beneath. Spec text (NR ON/OFF, TYPE I, Hi-Fi Stereo) is purely <b>decorative</b> — never interactive, never explained. Flip is <b>discoverable, not required</b>: a pulsing edge glow hints it; tapping the cassette flips it.</p></div>
+      <div class="card"><div class="k">Recipient</div><h3>Web-first, no wall <span class="star">★</span></h3><p>A shared link <b>always opens a full web player</b> — cassette, controls, side indicator, sender name — playable immediately in any mobile browser. A dismissible Smart App Banner may appear but <b>never blocks playback</b>. This is the most important screen in the product.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 FLOWS -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">03</span><h2 class="sec-title">Two flows</h2></div>
+    <div class="flows">
+      <div class="flow">
+        <h3>Create &amp; send</h3>
+        <div class="step"><span class="s">1</span><div>Home — tap the single <b>(+)</b></div></div>
+        <div class="step"><span class="s">2</span><div>Name the tape (4–5 words) &amp; say who it's <b>from</b></div></div>
+        <div class="step"><span class="s">3</span><div><b>Side A</b> — record your voice (≤ 0:90)</div></div>
+        <div class="step"><span class="s">4</span><div><b>Side B</b> — search &amp; attach one song (30s preview)</div></div>
+        <div class="step"><span class="s">5</span><div>Customize the shell — color &amp; material</div></div>
+        <div class="step"><span class="s">6</span><div>Share the web link · Save to Library</div></div>
+      </div>
+      <div class="flow">
+        <h3>Receive</h3>
+        <div class="step"><span class="s">1</span><div>Open the link — <b>full web player</b>, no download</div></div>
+        <div class="step"><span class="s">2</span><div>Press play — hear the sender's <b>voice</b> (Side A)</div></div>
+        <div class="step"><span class="s">3</span><div>Tap the cassette to <b>flip</b> to Side B</div></div>
+        <div class="step"><span class="s">4</span><div>Hear the <b>song</b> preview</div></div>
+        <div class="step"><span class="s">5</span><div><i>Save to your Library</i> → prompt to get the app</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 SCREEN INVENTORY -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">04</span><h2 class="sec-title">Revised screen inventory</h2></div>
+    <table>
+      <thead><tr><th>Screen</th><th>Role</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><span class="num">01</span>Home — empty</td><td class="tagcell">create</td><td>One centered (+) and a single line. No library, no identity prompt.</td></tr>
+        <tr><td><span class="num">01</span>Home — filled</td><td class="tagcell">all</td><td>(+) stays primary; recent sent &amp; received list; Library nav appears.</td></tr>
+        <tr><td><span class="num">02</span>New tape</td><td class="tagcell">create</td><td>4–5 word title; "from" name collected here (replaces Seal).</td></tr>
+        <tr><td><span class="num">03</span>Record · Side A</td><td class="tagcell">create</td><td>Voice capture, waveform, hard 0:90 cap, re-record.</td></tr>
+        <tr><td><span class="num">04</span>Add song · Side B</td><td class="tagcell">create</td><td>Spotify search → one song, 30s preview. Skippable? No — one song min for a tape with no VN.</td></tr>
+        <tr><td><span class="num">05</span>Customize</td><td class="tagcell">create</td><td>Shell color + material only. Notes/tracklist removed; stickers TBD.</td></tr>
+        <tr><td><span class="num">06</span>Share + Save</td><td class="tagcell">create</td><td>Web link (always works), share card, save to Library.</td></tr>
+        <tr><td><span class="num">07</span>Web Player <span class="star">★</span></td><td class="tagcell">receive</td><td>The #1 screen. Browser-based, full playback, flip, sender name, dismissible app banner.</td></tr>
+        <tr><td><span class="num">08</span>Library</td><td class="tagcell">all</td><td>Unified sent + received shelf; deferred sign-in / sync banner.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 05 REMOVED -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">05</span><h2 class="sec-title">Removed from earlier specs</h2></div>
+    <div class="removed">
+      <span><s>Seal</s> creator identity stamp — gone entirely</span>
+      <span><s>Tracklist</s> multiple songs — now one song per tape</span>
+      <span><s>Notes</s> long-form message field — now a 4–5 word title</span>
+      <span><s>Side B</s> as a second playlist — now Side B = one song</span>
+      <span><s>Seal onboarding</s> — first action is making a tape</span>
+      <span><s>MVP phasing</s> — designed as a complete product</span>
+      <span>Stickers — <i>parked, to be revisited</i></span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="hand">voice first, song second</div>
+    <div class="fp">Cassette · Product Spec v1.1 · supersedes the Master Design Document where in conflict · June 2026</div>
+  </div>
+</footer>
+
+</body>
+</html>

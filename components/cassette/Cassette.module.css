@@ -1,0 +1,328 @@
+/* ─── Cassette wrapper ─────────────────────────────────────────────────────── */
+
+.wrap {
+  position: relative;
+  width: 100%;
+}
+
+/* ─── Shell ─────────────────────────────────────────────────────────────────── */
+
+.cass {
+  container-type: inline-size;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.6 / 1;
+  border-radius: 15px;
+  overflow: hidden;
+  padding: 2.8cqi 3.4cqi;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(165deg, var(--sa), var(--sb) 55%, var(--sc));
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.5),
+    inset 0 2px 2px rgba(255, 255, 255, 0.14),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.cass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(140% 70% at 50% -10%, rgba(255, 255, 255, 0.1), transparent 55%);
+}
+
+/* ─── Corner screws ──────────────────────────────────────────────────────────── */
+
+.screw {
+  position: absolute;
+  width: 2.9cqi;
+  height: 2.9cqi;
+  border-radius: 50%;
+  z-index: 5;
+  background:
+    radial-gradient(circle at 35% 30%, #cfcfcf, transparent 55%),
+    #4c4c52;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+}
+
+.screwTl { left: 2cqi;  top: 2cqi;    }
+.screwTr { right: 2cqi; top: 2cqi;    }
+.screwBl { left: 2cqi;  bottom: 2cqi; }
+.screwBr { right: 2cqi; bottom: 2cqi; }
+
+/* ─── Top strip (brand + side letter) ──────────────────────────────────────── */
+
+.top {
+  display: flex;
+  align-items: center;
+  gap: 2.5cqi;
+  padding: 0 4cqi;
+  margin-bottom: 1.5cqi;
+  position: relative;
+  z-index: 3;
+  color: var(--pr);
+}
+
+.topSide {
+  width: 6cqi;
+  height: 6cqi;
+  border: 1px solid var(--pr);
+  border-radius: 1.4cqi;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 3.3cqi;
+  flex: none;
+}
+
+.brand    { flex: 1; min-width: 0; }
+
+.brandName {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 4cqi;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.brandDetail {
+  font-family: var(--font-mono);
+  font-size: 2.1cqi;
+  letter-spacing: 0.08em;
+  opacity: 0.72;
+  margin-top: 0.5cqi;
+  white-space: nowrap;
+}
+
+.brandLine {
+  height: 0.7cqi;
+  background: var(--ac);
+  border-radius: 1px;
+  margin-top: 1.1cqi;
+}
+
+.topDur {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 3.4cqi;
+  color: var(--ac);
+  flex: none;
+}
+
+/* ─── Index-card label ──────────────────────────────────────────────────────── */
+
+.label {
+  position: relative;
+  z-index: 3;
+  margin: 0 4cqi 1.6cqi;
+  height: 13cqi;
+  border-radius: 0.8cqi;
+  background: linear-gradient(180deg, #fffef9, #f0efe9);
+  box-shadow: 0 2cqi 4cqi rgba(0, 0, 0, 0.4);
+  transform: rotate(-0.6deg);
+}
+
+.labelText {
+  position: absolute;
+  left: 3cqi;
+  right: 3cqi;
+  top: 50%;
+  transform: translateY(-50%) rotate(-0.6deg);
+  text-align: center;
+  color: #2747c4; /* ink blue */
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* tape strips holding the card */
+.tape {
+  position: absolute;
+  width: 11cqi;
+  height: 3.6cqi;
+  background: rgba(214, 222, 230, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+  z-index: 4;
+}
+
+.tapeL {
+  top: -1.6cqi;
+  left: -2cqi;
+  transform: rotate(-34deg);
+}
+
+.tapeR {
+  top: -1.6cqi;
+  right: -2cqi;
+  transform: rotate(34deg);
+}
+
+/* ─── Reel window ────────────────────────────────────────────────────────────── */
+
+.window {
+  position: relative;
+  z-index: 2;
+  margin: 0 4cqi;
+  flex: 1;
+  min-height: 27cqi;
+  border-radius: 1.8cqi;
+  overflow: hidden;
+  background: linear-gradient(160deg, #1c1c20, #0b0b0d);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.windowGloss {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(118deg, rgba(255, 255, 255, 0.1) 0%, transparent 22%);
+}
+
+/* spool packs (dark rings behind reels) */
+.pk {
+  position: absolute;
+  top: 50%;
+  border-radius: 50%;
+  z-index: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    #1a1a1d 32%,
+    #2c2c30 33%,
+    #1f1f22 100%
+  );
+}
+
+.pkL {
+  left: 26%;
+  width: 30cqi;
+  height: 30cqi;
+  margin: -15cqi 0 0 -15cqi;
+}
+
+.pkR {
+  left: 74%;
+  width: 26cqi;
+  height: 26cqi;
+  margin: -13cqi 0 0 -13cqi;
+}
+
+/* reels */
+.reel {
+  position: absolute;
+  top: 50%;
+  width: 22cqi;
+  height: 22cqi;
+  margin: -11cqi 0 0 -11cqi;
+  z-index: 2;
+}
+
+.reelL { left: 26%; }
+.reelR { left: 74%; }
+
+.spinning {
+  animation: reelspin 2.4s linear infinite;
+  transform-origin: 50% 50%;
+}
+
+@keyframes reelspin {
+  to { transform: rotate(360deg); }
+}
+
+/* tape bridge */
+.bridge {
+  position: absolute;
+  top: 50%;
+  left: 40%;
+  right: 40%;
+  height: 11cqi;
+  transform: translateY(-50%);
+  z-index: 1;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.18) 0 1px,
+    transparent 1px 6px
+  );
+  opacity: 0.5;
+}
+
+/* ─── Bottom grill ───────────────────────────────────────────────────────────── */
+
+.bottom {
+  position: relative;
+  z-index: 2;
+  margin: 1.6cqi 4cqi 0;
+  height: 8.6cqi;
+  border-radius: 1.5cqi;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(0, 0, 0, 0.22));
+}
+
+.bottomRidges {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.16) 0 2px,
+    transparent 2px 6px
+  );
+}
+
+.bottomNotch {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 44%;
+  height: 6.8cqi;
+  background: rgba(0, 0, 0, 0.42);
+  clip-path: polygon(8% 0, 92% 0, 100% 100%, 0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 3.5cqi;
+}
+
+.hole {
+  width: 2.2cqi;
+  height: 2.2cqi;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.7);
+}
+
+.badge {
+  position: absolute;
+  left: 1.8cqi;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5.4cqi;
+  height: 5.4cqi;
+  border: 1px solid var(--pr);
+  border-radius: 1.3cqi;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 3cqi;
+  color: var(--pr);
+  opacity: 0.85;
+}
+
+/* ─── Sticker overlay ────────────────────────────────────────────────────────── */
+
+.sticker {
+  position: absolute;
+  z-index: 9;
+  filter: url(#paper) drop-shadow(0 2px 1.5px rgba(0, 0, 0, 0.4));
+}
+
+.sticker svg {
+  display: block;
+}
