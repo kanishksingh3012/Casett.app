@@ -15,51 +15,35 @@ interface AddSongScreenProps {
   onNext: () => void;
 }
 
-// Cached browser-side Spotify token
-let _cachedToken: { token: string; exp: number } | null = null;
+const GRADS: [string, string][] = [
+  ["#7b5cff", "#2a1a6a"], ["#ff8f6a", "#7a2a1a"], ["#3ec8a0", "#114a39"],
+  ["#6aa9ff", "#16315a"], ["#ff6aa9", "#5a1a3a"], ["#f2b850", "#6a4a14"],
+  ["#9b59b6", "#4a1a7a"], ["#e74c3c", "#5a1a1a"], ["#1abc9c", "#0a3a32"],
+  ["#e67e22", "#5a3010"],
+];
 
-async function getClientToken(): Promise<string | null> {
-  if (_cachedToken && Date.now() < _cachedToken.exp) return _cachedToken.token;
-  const id = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
-  const secret = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET;
-  if (!id || !secret) return null;
-  try {
-    const res = await fetch("https://accounts.spotify.com/api/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `Basic ${btoa(`${id}:${secret}`)}`,
-      },
-      body: "grant_type=client_credentials",
-    });
-    const d = await res.json();
-    if (!d.access_token) return null;
-    _cachedToken = { token: d.access_token, exp: Date.now() + (d.expires_in - 60) * 1000 };
-    return _cachedToken.token;
-  } catch {
-    return null;
-  }
+function gradFor(s: string): [string, string] {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) & 0xffff;
+  return GRADS[h % GRADS.length];
 }
 
-async function clientSearch(q: string): Promise<Song[]> {
-  const token = await getClientToken();
-  if (!token) return [];
+async function searchItunes(query: string): Promise<Song[]> {
   const res = await fetch(
-    `https://api.spotify.com/v1/search?q=${encodeURIComponent(q)}&type=track&limit=25&market=US`,
-    { headers: { Authorization: `Bearer ${token}` } }
+    `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=50`
   );
-  const d = await res.json();
-  return (d.tracks?.items || []).map((t: Record<string, unknown>) => {
-    const album = t.album as Record<string, unknown>;
-    const images = (album?.images as Array<{ url: string }>) ?? [];
-    const artists = (t.artists as Array<{ name: string }>).map((a) => a.name).join(", ");
+  const data = await res.json();
+  return (data.results || []).map((r: Record<string, string>) => {
+    const [a, b] = gradFor(r.trackName);
     return {
-      title: t.name as string,
-      artist: artists,
-      artworkUrl: images[1]?.url || images[0]?.url || undefined,
-      previewUrl: (t.preview_url as string | null) || undefined,
-      a: "#1DB954",
-      b: "#121212",
+      title: r.trackName,
+      artist: r.artistName,
+      a,
+      b,
+      previewUrl: r.previewUrl || undefined,
+      artworkUrl: r.artworkUrl100
+        ? r.artworkUrl100.replace("100x100bb", "60x60bb")
+        : undefined,
     };
   });
 }
@@ -85,28 +69,12 @@ export default function AddSongScreen({ tape, set, onBack, onNext }: AddSongScre
     }
     setLoading(true);
     try {
-      // Try server-side route first (works in production / local dev)
-      const res = await fetch(`/api/spotify/search?q=${encodeURIComponent(query)}`);
-      const data = await res.json();
-
-      if (!data.error && data.results?.length > 0) {
-        setResults(data.results);
-        return;
-      }
-
-      // Server can't reach Spotify → try browser-side Spotify directly
-      const clientResults = await clientSearch(query);
-      if (clientResults.length > 0) {
-        setResults(clientResults);
-        return;
-      }
-
-      // Last resort: local static list
-      setResults(SONGS.filter((s) =>
+      const items = await searchItunes(query);
+      setResults(items.length > 0 ? items : SONGS.filter(s =>
         (s.title + s.artist).toLowerCase().includes(query.toLowerCase())
       ));
     } catch {
-      setResults(SONGS.filter((s) =>
+      setResults(SONGS.filter(s =>
         (s.title + s.artist).toLowerCase().includes(query.toLowerCase())
       ));
     } finally {
@@ -136,9 +104,7 @@ export default function AddSongScreen({ tape, set, onBack, onNext }: AddSongScre
   };
 
   const list = q.trim().length < 2
-    ? SONGS.filter((s) =>
-        (s.title + s.artist).toLowerCase().includes(q.toLowerCase())
-      )
+    ? SONGS.filter(s => (s.title + s.artist).toLowerCase().includes(q.toLowerCase()))
     : results;
 
   return (
@@ -159,7 +125,7 @@ export default function AddSongScreen({ tape, set, onBack, onNext }: AddSongScre
               transform: "translateY(-50%)",
               width: 14, height: 14,
               border: "2px solid rgba(255,255,255,.15)",
-              borderTopColor: "#1DB954",
+              borderTopColor: "#E8A030",
               borderRadius: "50%",
               animation: "spin 0.7s linear infinite",
               display: "inline-block",
@@ -199,9 +165,7 @@ export default function AddSongScreen({ tape, set, onBack, onNext }: AddSongScre
                 </button>
                 <div className="song-info">
                   <div className="t">{s.title}</div>
-                  <div className="a">
-                    {s.artist}{hasPreview ? " · preview" : ""}
-                  </div>
+                  <div className="a">{s.artist}{hasPreview ? " · preview" : ""}</div>
                   {playing === i && <div className="mini-bar"><i /></div>}
                 </div>
                 <span className={`song-pick${on ? " on" : ""}`}>
