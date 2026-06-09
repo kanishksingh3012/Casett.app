@@ -163,10 +163,6 @@ export default function AppShell() {
         tape={tape}
         onBack={() => go("customize")}
         onSave={saveTape}
-        onPreview={() => {
-          setViewing(tape);
-          go("player");
-        }}
       />
     );
   } else if (screen === "app-player") {
