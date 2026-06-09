@@ -15,20 +15,66 @@ interface AddSongScreenProps {
   onNext: () => void;
 }
 
+// Cached browser-side Spotify token
+let _cachedToken: { token: string; exp: number } | null = null;
+
+async function getClientToken(): Promise<string | null> {
+  if (_cachedToken && Date.now() < _cachedToken.exp) return _cachedToken.token;
+  const id = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
+  const secret = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET;
+  if (!id || !secret) return null;
+  try {
+    const res = await fetch("https://accounts.spotify.com/api/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Basic ${btoa(`${id}:${secret}`)}`,
+      },
+      body: "grant_type=client_credentials",
+    });
+    const d = await res.json();
+    if (!d.access_token) return null;
+    _cachedToken = { token: d.access_token, exp: Date.now() + (d.expires_in - 60) * 1000 };
+    return _cachedToken.token;
+  } catch {
+    return null;
+  }
+}
+
+async function clientSearch(q: string): Promise<Song[]> {
+  const token = await getClientToken();
+  if (!token) return [];
+  const res = await fetch(
+    `https://api.spotify.com/v1/search?q=${encodeURIComponent(q)}&type=track&limit=25&market=US`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  const d = await res.json();
+  return (d.tracks?.items || []).map((t: Record<string, unknown>) => {
+    const album = t.album as Record<string, unknown>;
+    const images = (album?.images as Array<{ url: string }>) ?? [];
+    const artists = (t.artists as Array<{ name: string }>).map((a) => a.name).join(", ");
+    return {
+      title: t.name as string,
+      artist: artists,
+      artworkUrl: images[1]?.url || images[0]?.url || undefined,
+      previewUrl: (t.preview_url as string | null) || undefined,
+      a: "#1DB954",
+      b: "#121212",
+    };
+  });
+}
+
 export default function AddSongScreen({ tape, set, onBack, onNext }: AddSongScreenProps) {
   const [q, setQ] = useState("");
   const [sel, setSel] = useState<Song | null>(tape.song || null);
   const [playing, setPlaying] = useState<number | null>(null);
   const [results, setResults] = useState<Song[]>(SONGS);
   const [loading, setLoading] = useState(false);
-  const [noCredentials, setNoCredentials] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    return () => {
-      audioRef.current?.pause();
-    };
+    return () => { audioRef.current?.pause(); };
   }, []);
 
   const search = async (query: string) => {
@@ -39,27 +85,30 @@ export default function AddSongScreen({ tape, set, onBack, onNext }: AddSongScre
     }
     setLoading(true);
     try {
+      // Try server-side route first (works in production / local dev)
       const res = await fetch(`/api/spotify/search?q=${encodeURIComponent(query)}`);
       const data = await res.json();
 
-      if (data.error === "missing_credentials") {
-        setNoCredentials(true);
-        setResults(
-          SONGS.filter((s) =>
-            (s.title + s.artist).toLowerCase().includes(query.toLowerCase())
-          )
-        );
+      if (!data.error && data.results?.length > 0) {
+        setResults(data.results);
         return;
       }
 
-      setNoCredentials(false);
-      setResults(data.results || []);
+      // Server can't reach Spotify → try browser-side Spotify directly
+      const clientResults = await clientSearch(query);
+      if (clientResults.length > 0) {
+        setResults(clientResults);
+        return;
+      }
+
+      // Last resort: local static list
+      setResults(SONGS.filter((s) =>
+        (s.title + s.artist).toLowerCase().includes(query.toLowerCase())
+      ));
     } catch {
-      setResults(
-        SONGS.filter((s) =>
-          (s.title + s.artist).toLowerCase().includes(query.toLowerCase())
-        )
-      );
+      setResults(SONGS.filter((s) =>
+        (s.title + s.artist).toLowerCase().includes(query.toLowerCase())
+      ));
     } finally {
       setLoading(false);
     }
@@ -118,16 +167,6 @@ export default function AddSongScreen({ tape, set, onBack, onNext }: AddSongScre
           )}
         </div>
 
-        {noCredentials && (
-          <div style={{
-            margin: "0 0 8px", padding: "8px 12px",
-            background: "rgba(255,69,58,.12)", borderRadius: 8,
-            fontSize: 11, color: "#FF453A", lineHeight: 1.5,
-          }}>
-            Add <strong>SPOTIFY_CLIENT_ID</strong> &amp; <strong>SPOTIFY_CLIENT_SECRET</strong> to <code>.env.local</code> for full Spotify search.
-          </div>
-        )}
-
         <div className="song-list">
           {list.length === 0 && !loading && (
             <div style={{ textAlign: "center", opacity: 0.4, padding: "24px 0", fontSize: 13 }}>
@@ -161,12 +200,9 @@ export default function AddSongScreen({ tape, set, onBack, onNext }: AddSongScre
                 <div className="song-info">
                   <div className="t">{s.title}</div>
                   <div className="a">
-                    {s.artist}
-                    {hasPreview ? " · preview" : ""}
+                    {s.artist}{hasPreview ? " · preview" : ""}
                   </div>
-                  {playing === i && (
-                    <div className="mini-bar"><i /></div>
-                  )}
+                  {playing === i && <div className="mini-bar"><i /></div>}
                 </div>
                 <span className={`song-pick${on ? " on" : ""}`}>
                   {on ? ICON.check : ICON.plus}
