@@ -100,7 +100,7 @@ export default function AppPlayerScreen({ tape, onBack, onShare }: AppPlayerScre
         }
       />
       <div className="player-body" style={{ paddingTop: "10px" }}>
-        <div style={{ width: "100%", margin: "0 auto 14px" }}>
+        <div style={{ width: "100%", maxWidth: 340, margin: "0 auto 14px" }}>
           <FlipCassette tape={tape} flipped={flipped} spin={playing} />
         </div>
         <div className="side-ind">

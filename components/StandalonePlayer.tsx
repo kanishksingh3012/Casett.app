@@ -119,7 +119,7 @@ export default function StandalonePlayer() {
       </div>
 
       {/* cassette */}
-      <div style={{ width: "100%", maxWidth: 360, marginBottom: 24 }}>
+      <div style={{ width: "100%", maxWidth: 340, marginBottom: 24 }}>
         <FlipCassette tape={tape} flipped={flipped} spin={playing} />
       </div>
 

@@ -133,7 +133,7 @@ export default function CustomizeScreen({ tape, set, onBack, onNext }: Customize
       <TopBar onBack={onBack} title="Customize" step="4 / 5" />
       <div className="screen-body">
         <Stepper step={2} />
-        <div className="cass-stage">
+        <div className="cass-stage sm">
           <div className="cz-cass" ref={wrapRef}>
             <Cassette tape={tape} side="A" showStickers={false} />
             <div className="sticker-layer">
