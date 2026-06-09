@@ -288,8 +288,8 @@ button {
 
 /* cassette stage */
 .cass-stage { margin: 4px auto 18px; width: 100%; }
-.cass-stage.sm   { max-width: 340px; margin: 6px auto 18px; }
-.cass-stage.hero { max-width: 320px; margin: 10px auto 14px; }
+.cass-stage.sm   { max-width: 300px; margin: 6px auto 14px; }
+.cass-stage.hero { max-width: 344px; margin: 10px auto 14px; }
 
 /* LCD */
 .lcd {

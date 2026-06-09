@@ -7,16 +7,19 @@
 
 /* ─── Shell ─────────────────────────────────────────────────────────────────── */
 
+/*
+  All measurements converted from original 472×298 px design to cqi
+  (container inline-size = % of cassette width).
+  Formula: cqi = px / 472 × 100
+*/
+
 .cass {
   container-type: inline-size;
   position: relative;
   width: 100%;
-  aspect-ratio: 1.6 / 1;
+  aspect-ratio: 472 / 298;  /* original design ratio */
   border-radius: 15px;
   overflow: hidden;
-  padding: 2.8cqi 3.4cqi;
-  display: flex;
-  flex-direction: column;
   background: linear-gradient(165deg, var(--sa), var(--sb) 55%, var(--sc));
   box-shadow:
     0 14px 30px rgba(0, 0, 0, 0.5),
@@ -30,51 +33,63 @@
   inset: 0;
   pointer-events: none;
   background: radial-gradient(140% 70% at 50% -10%, rgba(255, 255, 255, 0.1), transparent 55%);
+  z-index: 10;
 }
 
-/* ─── Corner screws ──────────────────────────────────────────────────────────── */
+/* ─── Corner screws  (original: 13px, at 11px from edges) ───────────────────── */
 
 .screw {
   position: absolute;
-  width: 2.9cqi;
-  height: 2.9cqi;
+  width: 2.75cqi;   /* 13/472 */
+  height: 2.75cqi;
   border-radius: 50%;
-  z-index: 5;
+  z-index: 6;
   background:
     radial-gradient(circle at 35% 30%, #cfcfcf, transparent 55%),
     #4c4c52;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
 }
 
-.screwTl { left: 2cqi;  top: 2cqi;    }
-.screwTr { right: 2cqi; top: 2cqi;    }
-.screwBl { left: 2cqi;  bottom: 2cqi; }
-.screwBr { right: 2cqi; bottom: 2cqi; }
+.screw::after {
+  content: "";
+  position: absolute;
+  inset: 28%;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.28);
+}
 
-/* ─── Top strip (brand + side letter) ──────────────────────────────────────── */
+.screwTl { left: 2.33cqi;  top: 2.33cqi;    }   /* 11/472 */
+.screwTr { right: 2.33cqi; top: 2.33cqi;    }
+.screwBl { left: 2.33cqi;  bottom: 2.33cqi; }
+.screwBr { right: 2.33cqi; bottom: 2.33cqi; }
+
+/* ─── Brand strip (original: top 15px, left/right 38px, height 22px) ──────── */
 
 .top {
+  position: absolute;
+  top: 3.18cqi;    /* 15/472 */
+  left: 8.05cqi;   /* 38/472 */
+  right: 8.05cqi;
+  height: 4.66cqi; /* 22/472 */
   display: flex;
   align-items: center;
-  gap: 2.5cqi;
-  padding: 0 4cqi;
-  margin-bottom: 1.5cqi;
-  position: relative;
-  z-index: 3;
+  gap: 1.9cqi;
+  z-index: 4;
   color: var(--pr);
 }
 
 .topSide {
-  width: 6cqi;
-  height: 6cqi;
+  width: 5.1cqi;     /* 24/472 */
+  height: 5.1cqi;
   border: 1px solid var(--pr);
-  border-radius: 1.4cqi;
+  border-radius: 1cqi;
   display: grid;
   place-items: center;
   font-family: var(--font-ui);
   font-weight: 700;
-  font-size: 3.3cqi;
+  font-size: 2.5cqi;
   flex: none;
+  opacity: 0.85;
 }
 
 .brand    { flex: 1; min-width: 0; }
@@ -82,16 +97,17 @@
 .brandName {
   font-family: var(--font-ui);
   font-weight: 700;
-  font-size: 4cqi;
-  letter-spacing: 0.06em;
+  font-size: 3.6cqi;  /* 17/472 */
+  letter-spacing: 0.04em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1;
 }
 
 .brandDetail {
   font-family: var(--font-mono);
-  font-size: 2.1cqi;
+  font-size: 1.6cqi;  /* 7.5/472 */
   letter-spacing: 0.08em;
   opacity: 0.72;
   margin-top: 0.5cqi;
@@ -99,79 +115,31 @@
 }
 
 .brandLine {
-  height: 0.7cqi;
+  height: 0.6cqi;
   background: var(--ac);
   border-radius: 1px;
-  margin-top: 1.1cqi;
+  margin-top: 0.8cqi;
 }
 
 .topDur {
   font-family: var(--font-ui);
-  font-weight: 700;
-  font-size: 3.4cqi;
+  font-weight: 800;
+  font-size: 3.18cqi;  /* 15/472 */
+  letter-spacing: 0.06em;
   color: var(--ac);
   flex: none;
 }
 
-/* ─── Index-card label ──────────────────────────────────────────────────────── */
-
-.label {
-  position: relative;
-  z-index: 3;
-  margin: 0 4cqi 1.6cqi;
-  height: 13cqi;
-  border-radius: 0.8cqi;
-  background: linear-gradient(180deg, #fffef9, #f0efe9);
-  box-shadow: 0 2cqi 4cqi rgba(0, 0, 0, 0.4);
-  transform: rotate(-0.6deg);
-}
-
-.labelText {
-  position: absolute;
-  left: 3cqi;
-  right: 3cqi;
-  top: 50%;
-  transform: translateY(-50%) rotate(-0.6deg);
-  text-align: center;
-  color: #2747c4; /* ink blue */
-  line-height: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* tape strips holding the card */
-.tape {
-  position: absolute;
-  width: 11cqi;
-  height: 3.6cqi;
-  background: rgba(214, 222, 230, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
-  z-index: 4;
-}
-
-.tapeL {
-  top: -1.6cqi;
-  left: -2cqi;
-  transform: rotate(-34deg);
-}
-
-.tapeR {
-  top: -1.6cqi;
-  right: -2cqi;
-  transform: rotate(34deg);
-}
-
-/* ─── Reel window ────────────────────────────────────────────────────────────── */
+/* ─── Reel window (original: top 46px, l/r 30px, h 166px) ─────────────────── */
 
 .window {
-  position: relative;
+  position: absolute;
   z-index: 2;
-  margin: 0 4cqi;
-  flex: 1;
-  min-height: 27cqi;
-  border-radius: 1.8cqi;
+  top: 9.75cqi;    /* 46/472 */
+  left: 6.36cqi;   /* 30/472 */
+  right: 6.36cqi;
+  height: 35.17cqi; /* 166/472 */
+  border-radius: 1.91cqi; /* 9/472 */
   overflow: hidden;
   background: linear-gradient(160deg, #1c1c20, #0b0b0d);
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.7);
@@ -185,7 +153,7 @@
   background: linear-gradient(118deg, rgba(255, 255, 255, 0.1) 0%, transparent 22%);
 }
 
-/* spool packs (dark rings behind reels) */
+/* spool packs — original: L 158px at left 27%, R 140px at left 73% */
 .pk {
   position: absolute;
   top: 50%;
@@ -200,31 +168,31 @@
 }
 
 .pkL {
-  left: 26%;
-  width: 30cqi;
-  height: 30cqi;
-  margin: -15cqi 0 0 -15cqi;
+  left: 27%;
+  width: 33.47cqi;     /* 158/472 */
+  height: 33.47cqi;
+  margin: -16.74cqi 0 0 -16.74cqi;
 }
 
 .pkR {
-  left: 74%;
-  width: 26cqi;
-  height: 26cqi;
-  margin: -13cqi 0 0 -13cqi;
+  left: 73%;
+  width: 29.66cqi;     /* 140/472 */
+  height: 29.66cqi;
+  margin: -14.83cqi 0 0 -14.83cqi;
 }
 
-/* reels */
+/* reels — original: 100px at left 27%/73% */
 .reel {
   position: absolute;
   top: 50%;
-  width: 22cqi;
-  height: 22cqi;
-  margin: -11cqi 0 0 -11cqi;
+  width: 21.19cqi;     /* 100/472 */
+  height: 21.19cqi;
+  margin: -10.6cqi 0 0 -10.6cqi;
   z-index: 2;
 }
 
-.reelL { left: 26%; }
-.reelR { left: 74%; }
+.reelL { left: 27%; }
+.reelR { left: 73%; }
 
 .spinning {
   animation: reelspin 2.4s linear infinite;
@@ -239,9 +207,9 @@
 .bridge {
   position: absolute;
   top: 50%;
-  left: 40%;
-  right: 40%;
-  height: 11cqi;
+  left: 38%;
+  right: 38%;
+  height: 14.83cqi;    /* 70/472 */
   transform: translateY(-50%);
   z-index: 1;
   background: repeating-linear-gradient(
@@ -252,14 +220,69 @@
   opacity: 0.5;
 }
 
-/* ─── Bottom grill ───────────────────────────────────────────────────────────── */
+/* ─── Index-card label (original: top 30px, l/r 64px, min-h 70px) ─────────── */
+
+/* overlaps the top of the window — matching original design intent */
+.label {
+  position: absolute;
+  z-index: 5;
+  top: 6.36cqi;     /* 30/472 — sits above window top (9.75cqi), overlaps it */
+  left: 13.56cqi;   /* 64/472 */
+  right: 13.56cqi;
+  min-height: 14.83cqi; /* 70/472 */
+  border-radius: 1.2cqi;
+  background: linear-gradient(180deg, #fffef9, #f0efe9);
+  box-shadow: 0 1.5cqi 3cqi rgba(0, 0, 0, 0.38);
+  transform: rotate(-0.6deg);
+}
+
+.labelText {
+  position: absolute;
+  left: 3.8cqi;
+  right: 3.8cqi;
+  top: 50%;
+  transform: translateY(-50%) rotate(-0.6deg);
+  text-align: center;
+  color: #2747c4;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* washi tape strips — original: 62×23px, .a top:-11 left:-12 rotate(-38deg) */
+.tape {
+  position: absolute;
+  width: 13.14cqi;   /* 62/472 */
+  height: 4.87cqi;   /* 23/472 */
+  background: rgba(214, 222, 230, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+  z-index: 4;
+}
+
+.tapeL {
+  top: -2.33cqi;    /* -11/472 */
+  left: -2.54cqi;   /* -12/472 */
+  transform: rotate(-38deg);
+}
+
+.tapeR {
+  bottom: -2.33cqi;
+  right: -2.54cqi;
+  transform: rotate(-38deg);
+}
+
+/* ─── Bottom grill (original: bottom 14px, l/r 30px, h 56px) ──────────────── */
 
 .bottom {
-  position: relative;
+  position: absolute;
   z-index: 2;
-  margin: 1.6cqi 4cqi 0;
-  height: 8.6cqi;
-  border-radius: 1.5cqi;
+  bottom: 2.97cqi;   /* 14/472 */
+  left: 6.36cqi;
+  right: 6.36cqi;
+  height: 11.86cqi;  /* 56/472 */
+  border-radius: 1.69cqi; /* 8/472 */
   overflow: hidden;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(0, 0, 0, 0.22));
 }
@@ -280,18 +303,18 @@
   bottom: 0;
   transform: translateX(-50%);
   width: 44%;
-  height: 6.8cqi;
+  height: 75%;
   background: rgba(0, 0, 0, 0.42);
   clip-path: polygon(8% 0, 92% 0, 100% 100%, 0 100%);
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 0 3.5cqi;
+  padding: 0 3cqi;
 }
 
 .hole {
-  width: 2.2cqi;
-  height: 2.2cqi;
+  width: 2.33cqi;   /* 11/472 */
+  height: 2.33cqi;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.6);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.7);
@@ -299,18 +322,17 @@
 
 .badge {
   position: absolute;
-  left: 1.8cqi;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 5.4cqi;
-  height: 5.4cqi;
+  left: 1.27cqi;    /* 6/472 */
+  bottom: 0.85cqi;  /* 4/472 */
+  width: 5.1cqi;
+  height: 5.1cqi;
   border: 1px solid var(--pr);
-  border-radius: 1.3cqi;
+  border-radius: 1cqi;
   display: grid;
   place-items: center;
   font-family: var(--font-ui);
   font-weight: 700;
-  font-size: 3cqi;
+  font-size: 2.75cqi; /* 13/472 */
   color: var(--pr);
   opacity: 0.85;
 }
