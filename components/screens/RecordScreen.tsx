@@ -135,7 +135,7 @@ export default function RecordScreen({ tape, set, onBack, onNext }: RecordScreen
       <TopBar onBack={onBack} title="Side A · Your Voice" step="2 / 5" />
       <div className="screen-body">
         <Stepper step={0} />
-        <div className="cass-stage sm">
+        <div className="cass-stage">
           <Cassette tape={tape} side="A" spin={rec} showStickers={false} />
         </div>
         <LCD
