@@ -28,7 +28,7 @@ export default function Cassette({
   const noteStyle: React.CSSProperties = {
     fontFamily: f.css,
     fontWeight: f.weight ?? 400,
-    fontSize: `calc(10.4cqi * ${f.mult})`,
+    fontSize: `calc(8cqi * ${f.mult})`,
   };
 
   const shellVars = {

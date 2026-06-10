@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { Tape } from "@/lib/types";
 import StatusBar from "@/components/ui/StatusBar";
 import TopBar from "@/components/ui/TopBar";
@@ -15,41 +15,75 @@ interface AppPlayerScreenProps {
 }
 
 const fmt = (s: number) =>
-  `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  `${Math.floor(s / 60)}:${String(Math.floor(s) % 60).padStart(2, "0")}`;
 
 export default function AppPlayerScreen({ tape, onBack, onShare }: AppPlayerScreenProps) {
   const [flipped, setFlipped] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [elapsed, setElapsed] = useState(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const rafRef = useRef<number | null>(null);
 
   const side = flipped ? "B" : "A";
+  const sideUrl = side === "A" ? (tape.voiceUrl ?? null) : (tape.song?.previewUrl ?? null);
   const total = side === "A" ? (tape.voiceLen || 90) : 30;
 
   useEffect(() => {
-    if (!playing) return;
-    const id = setInterval(() => {
-      setElapsed((e) => {
-        if (e >= total - 1) {
-          clearInterval(id);
-          setPlaying(false);
-          return total;
-        }
-        return e + 1;
-      });
-    }, 1000);
-    return () => clearInterval(id);
-  }, [playing, side, total]);
+    return () => {
+      audioRef.current?.pause();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    audioRef.current?.pause();
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    audioRef.current = null;
+    setElapsed(0);
+    setPlaying(false);
+  }, [flipped]);
+
+  const tick = () => {
+    const a = audioRef.current;
+    if (!a) return;
+    setElapsed(a.currentTime);
+    if (!a.paused) rafRef.current = requestAnimationFrame(tick);
+  };
+
+  const togglePlay = () => {
+    if (!sideUrl) return;
+    if (playing) {
+      audioRef.current?.pause();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      setPlaying(false);
+    } else {
+      if (audioRef.current?.paused && audioRef.current.src) {
+        audioRef.current.play();
+        rafRef.current = requestAnimationFrame(tick);
+        setPlaying(true);
+      } else {
+        const a = new Audio(sideUrl);
+        audioRef.current = a;
+        a.onended = () => { setPlaying(false); setElapsed(0); };
+        a.play();
+        rafRef.current = requestAnimationFrame(tick);
+        setPlaying(true);
+      }
+    }
+  };
 
   const handleFlip = () => {
     setFlipped((f) => !f);
-    setElapsed(0);
-    setPlaying(false);
   };
 
   const handleRew = () => {
-    setFlipped(false);
+    audioRef.current?.pause();
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    if (audioRef.current) audioRef.current.currentTime = 0;
+    audioRef.current = null;
     setElapsed(0);
     setPlaying(false);
+    setFlipped(false);
   };
 
   return (
@@ -66,7 +100,7 @@ export default function AppPlayerScreen({ tape, onBack, onShare }: AppPlayerScre
         }
       />
       <div className="player-body" style={{ paddingTop: "10px" }}>
-        <div style={{ width: "100%", margin: "0 auto 14px" }}>
+        <div style={{ width: "100%", maxWidth: 340, margin: "0 auto 14px" }}>
           <FlipCassette tape={tape} flipped={flipped} spin={playing} />
         </div>
         <div className="side-ind">
@@ -80,12 +114,19 @@ export default function AppPlayerScreen({ tape, onBack, onShare }: AppPlayerScre
               {fmt(elapsed)} — {fmt(total)}
             </div>
           </div>
+          {side === "B" && tape.song && (
+            <div style={{ fontSize: 13, opacity: 0.6, marginTop: 6, textAlign: "center" }}>
+              {tape.song.title} · {tape.song.artist}
+            </div>
+          )}
         </div>
         <div className="player-transport">
-          <button className="tbtn" onClick={handleRew}>
-            {ICON.rew}
-          </button>
-          <button className="tbtn play" onClick={() => setPlaying((p) => !p)}>
+          <button className="tbtn" onClick={handleRew}>{ICON.rew}</button>
+          <button
+            className="tbtn play"
+            onClick={togglePlay}
+            style={{ opacity: sideUrl ? 1 : 0.35 }}
+          >
             {playing ? ICON.pause : ICON.play}
           </button>
           <button className="tbtn flip-btn" onClick={handleFlip}>

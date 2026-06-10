@@ -29,6 +29,8 @@ export interface Song {
   artist: string;
   a: string;
   b: string;
+  previewUrl?: string;
+  artworkUrl?: string;
 }
 
 export interface Tape {
@@ -39,6 +41,7 @@ export interface Tape {
   stickers: StickerPlacement[];
   hasVoice: boolean;
   voiceLen: number;
+  voiceUrl?: string;
   song: Song | null;
   dir?: "sent" | "received";
   when?: string;

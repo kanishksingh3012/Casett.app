@@ -18,7 +18,7 @@ export default function NewTapeScreen({ tape, set, onBack, onNext }: NewTapeScre
       <StatusBar />
       <TopBar onBack={onBack} title="New Tape" step="1 / 5" />
       <div className="screen-body">
-        <div className="cass-stage sm">
+        <div className="cass-stage">
           <Cassette tape={tape} side="A" showStickers={false} />
         </div>
         <div className="field">
