@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import type { Tape, Song } from "@/lib/types";
-import { SONGS } from "@/lib/data";
 import StatusBar from "@/components/ui/StatusBar";
 import TopBar from "@/components/ui/TopBar";
 import Stepper from "@/components/ui/Stepper";
@@ -30,7 +29,7 @@ function gradFor(s: string): [string, string] {
 
 async function searchItunes(query: string): Promise<Song[]> {
   const res = await fetch(
-    `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=50`
+    `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=25`
   );
   const data = await res.json();
   return (data.results || []).map((r: Record<string, string>) => {
@@ -52,8 +51,9 @@ export default function AddSongScreen({ tape, set, onBack, onNext }: AddSongScre
   const [q, setQ] = useState("");
   const [sel, setSel] = useState<Song | null>(tape.song || null);
   const [playing, setPlaying] = useState<number | null>(null);
-  const [results, setResults] = useState<Song[]>(SONGS);
+  const [results, setResults] = useState<Song[]>([]);
   const [loading, setLoading] = useState(false);
+  const [searched, setSearched] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -63,21 +63,19 @@ export default function AddSongScreen({ tape, set, onBack, onNext }: AddSongScre
 
   const search = async (query: string) => {
     if (query.trim().length < 2) {
-      setResults(SONGS);
+      setResults([]);
+      setSearched(false);
       setLoading(false);
       return;
     }
     setLoading(true);
     try {
       const items = await searchItunes(query);
-      setResults(items.length > 0 ? items : SONGS.filter(s =>
-        (s.title + s.artist).toLowerCase().includes(query.toLowerCase())
-      ));
+      setResults(items.slice(0, 3));
     } catch {
-      setResults(SONGS.filter(s =>
-        (s.title + s.artist).toLowerCase().includes(query.toLowerCase())
-      ));
+      setResults([]);
     } finally {
+      setSearched(true);
       setLoading(false);
     }
   };
@@ -103,9 +101,7 @@ export default function AddSongScreen({ tape, set, onBack, onNext }: AddSongScre
     setPlaying(i);
   };
 
-  const list = q.trim().length < 2
-    ? SONGS.filter(s => (s.title + s.artist).toLowerCase().includes(q.toLowerCase()))
-    : results;
+  const hasQuery = q.trim().length >= 2;
 
   return (
     <div className="screen">
@@ -133,48 +129,59 @@ export default function AddSongScreen({ tape, set, onBack, onNext }: AddSongScre
           )}
         </div>
 
-        <div className="song-list">
-          {list.length === 0 && !loading && (
-            <div style={{ textAlign: "center", opacity: 0.4, padding: "24px 0", fontSize: 13 }}>
-              No results
+        {!hasQuery ? (
+          <div className="song-empty">
+            <span className="song-empty-note">♪</span>
+            <div className="song-empty-h">Say it with a song</div>
+            <div className="song-empty-p">
+              Pick a track that carries the message<br />
+              words can&apos;t. Search above to begin.
             </div>
-          )}
-          {list.map((s, i) => {
-            const on = !!(sel && sel.title === s.title && sel.artist === s.artist);
-            const hasPreview = !!s.previewUrl;
-            return (
-              <div
-                key={`${s.title}-${s.artist}-${i}`}
-                className={`song-row${on ? " on" : ""}`}
-                onClick={() => setSel(s)}
-              >
-                <button
-                  className="song-art"
-                  style={
-                    s.artworkUrl
-                      ? { backgroundImage: `url(${s.artworkUrl})`, backgroundSize: "cover", backgroundPosition: "center" }
-                      : { background: `linear-gradient(135deg,${s.a},${s.b})` }
-                  }
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    togglePlay(i, s);
-                  }}
-                  disabled={!hasPreview}
-                >
-                  {hasPreview && (playing === i ? ICON.pause : ICON.play)}
-                </button>
-                <div className="song-info">
-                  <div className="t">{s.title}</div>
-                  <div className="a">{s.artist}{hasPreview ? " · preview" : ""}</div>
-                  {playing === i && <div className="mini-bar"><i /></div>}
-                </div>
-                <span className={`song-pick${on ? " on" : ""}`}>
-                  {on ? ICON.check : ICON.plus}
-                </span>
+          </div>
+        ) : (
+          <div className="song-list">
+            {searched && results.length === 0 && !loading && (
+              <div style={{ textAlign: "center", opacity: 0.4, padding: "24px 0", fontSize: 13 }}>
+                No results
               </div>
-            );
-          })}
-        </div>
+            )}
+            {results.map((s, i) => {
+              const on = !!(sel && sel.title === s.title && sel.artist === s.artist);
+              const hasPreview = !!s.previewUrl;
+              return (
+                <div
+                  key={`${s.title}-${s.artist}-${i}`}
+                  className={`song-row${on ? " on" : ""}`}
+                  onClick={() => setSel(s)}
+                >
+                  <button
+                    className="song-art"
+                    style={
+                      s.artworkUrl
+                        ? { backgroundImage: `url(${s.artworkUrl})`, backgroundSize: "cover", backgroundPosition: "center" }
+                        : { background: `linear-gradient(135deg,${s.a},${s.b})` }
+                    }
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      togglePlay(i, s);
+                    }}
+                    disabled={!hasPreview}
+                  >
+                    {hasPreview && (playing === i ? ICON.pause : ICON.play)}
+                  </button>
+                  <div className="song-info">
+                    <div className="t">{s.title}</div>
+                    <div className="a">{s.artist}{hasPreview ? " · preview" : ""}</div>
+                    {playing === i && <div className="mini-bar"><i /></div>}
+                  </div>
+                  <span className={`song-pick${on ? " on" : ""}`}>
+                    {on ? ICON.check : ICON.plus}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
       <div className="screen-foot">
         <button

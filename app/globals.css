@@ -327,6 +327,20 @@ button {
 .song-pick svg { width: 15px; height: 15px; }
 .song-pick.on { background: var(--amber); color: #1c1209; border-color: var(--amber); }
 
+/* song empty state */
+.song-empty {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: 48px 20px 24px; gap: 10px;
+}
+.song-empty-note {
+  font-size: 30px; color: var(--amber);
+  width: 60px; height: 60px; border-radius: 50%;
+  display: grid; place-items: center; margin-bottom: 4px;
+  background: rgba(232,160,48,.1); border: 1px solid rgba(232,160,48,.25);
+}
+.song-empty-h { font-family: var(--font-ui); font-weight: 700; font-size: 19px; }
+.song-empty-p { font-size: 13.5px; color: var(--t2); line-height: 1.55; }
+
 /* customize */
 .cz-sec { margin-bottom: 20px; }
 .cz-lbl {
