@@ -28,11 +28,9 @@ function gradFor(s: string): [string, string] {
 }
 
 async function searchItunes(query: string): Promise<Song[]> {
-  const res = await fetch(
-    `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=25`
-  );
-  const data = await res.json();
-  return (data.results || []).map((r: Record<string, string>) => {
+  const res = await fetch(`/api/itunes?q=${encodeURIComponent(query)}`);
+  const results = await res.json();
+  return (results || []).map((r: Record<string, string>) => {
     const [a, b] = gradFor(r.trackName);
     return {
       title: r.trackName,
