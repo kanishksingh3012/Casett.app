@@ -18,6 +18,7 @@ interface ShareScreenProps {
 export default function ShareScreen({ tape, onBack, onDone }: ShareScreenProps) {
   const [tapeId, setTapeId] = useState<string | null>(null);
   const [saving, setSaving] = useState(true);
+  const [saveErr, setSaveErr] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const savedRef = useRef(false);
 
@@ -25,8 +26,8 @@ export default function ShareScreen({ tape, onBack, onDone }: ShareScreenProps) 
     if (savedRef.current) return;
     savedRef.current = true;
     saveTape(tape)
-      .then((id) => setTapeId(id))
-      .catch(() => {})
+      .then((id) => { setTapeId(id); setSaveErr(null); })
+      .catch((e: Error) => setSaveErr(e?.message ?? "unknown error"))
       .finally(() => setSaving(false));
   }, [tape]);
 
@@ -37,6 +38,8 @@ export default function ShareScreen({ tape, onBack, onDone }: ShareScreenProps) 
 
   const displayUrl = tapeId
     ? `casett.app/t/${tapeId}`
+    : saveErr
+    ? "casett.app/t/… (fallback)"
     : "casett.app/t/...";
 
   const handleCopy = async () => {
@@ -78,6 +81,18 @@ export default function ShareScreen({ tape, onBack, onDone }: ShareScreenProps) 
             {copied ? ICON.check : ICON.copy}
           </button>
         </div>
+
+        {/* debug strip — shows exactly why save failed */}
+        {saveErr && (
+          <div style={{
+            width: "100%", background: "rgba(255,69,58,.12)", border: "1px solid rgba(255,69,58,.3)",
+            borderRadius: 10, padding: "8px 12px", marginBottom: 10,
+            fontSize: 11, color: "#FF453A", fontFamily: "monospace", wordBreak: "break-all",
+          }}>
+            ⚠ save failed: {saveErr}
+          </div>
+        )}
+
         <div className="share-actions">
           <button className="cta" onClick={handleShare} disabled={saving}>
             {saving ? (
