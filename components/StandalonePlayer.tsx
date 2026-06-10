@@ -11,8 +11,12 @@ import { ICON } from "@/components/ui/icons";
 const fmt = (s: number) =>
   `${Math.floor(s / 60)}:${String(Math.floor(s) % 60).padStart(2, "0")}`;
 
-export default function StandalonePlayer() {
-  const [tape, setTape] = useState<Tape | null>(null);
+interface Props {
+  initialTape?: Tape | null;
+}
+
+export default function StandalonePlayer({ initialTape }: Props = {}) {
+  const [tape, setTape] = useState<Tape | null>(initialTape ?? null);
   const [flipped, setFlipped] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [elapsed, setElapsed] = useState(0);
@@ -20,7 +24,9 @@ export default function StandalonePlayer() {
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
-    // 1) Try the tape encoded in the URL (works on any device)
+    // Skip detection if tape was already provided as a prop
+    if (initialTape !== undefined) return;
+    // 1) URL-encoded tape (?t=...)
     try {
       const params = new URLSearchParams(window.location.search);
       const t = params.get("t");
@@ -29,12 +35,12 @@ export default function StandalonePlayer() {
         if (decoded) { setTape(decoded); return; }
       }
     } catch {}
-    // 2) Fallback: same-device localStorage copy
+    // 2) Same-device localStorage fallback
     try {
       const raw = localStorage.getItem("cz_share_tape");
       if (raw) setTape(JSON.parse(raw));
     } catch {}
-  }, []);
+  }, [initialTape]);
 
   const side = flipped ? "B" : "A";
   const sideUrl = side === "A" ? (tape?.voiceUrl ?? null) : (tape?.song?.previewUrl ?? null);
@@ -125,17 +131,14 @@ export default function StandalonePlayer() {
       fontFamily: "system-ui, sans-serif",
       color: "#F4F4F2",
     }}>
-      {/* from label */}
       <div style={{ fontSize: 14, color: "#9A9AA0", marginBottom: 20 }}>
         A tape from <strong style={{ color: "#F4F4F2" }}>{tape.from || "someone"}</strong>
       </div>
 
-      {/* cassette */}
       <div style={{ width: "100%", maxWidth: 340, marginBottom: 24 }}>
         <FlipCassette tape={tape} flipped={flipped} spin={playing} />
       </div>
 
-      {/* side indicator */}
       <div style={{ display: "flex", gap: 16, marginBottom: 20 }}>
         {["A", "B"].map((s) => (
           <span key={s} style={{
@@ -147,7 +150,6 @@ export default function StandalonePlayer() {
         ))}
       </div>
 
-      {/* waveform + time */}
       <div style={{ width: "100%", maxWidth: 300, marginBottom: 20 }}>
         <Waveform active={playing} />
         <div style={{ textAlign: "center", fontSize: 13, color: "#65656B", marginTop: 6 }}>
@@ -160,7 +162,6 @@ export default function StandalonePlayer() {
         )}
       </div>
 
-      {/* transport */}
       <div className="player-transport">
         <button className="tbtn" onClick={handleRew}>{ICON.rew}</button>
         <button
@@ -176,7 +177,6 @@ export default function StandalonePlayer() {
         </button>
       </div>
 
-      {/* back link */}
       <Link href="/" style={{
         marginTop: 32, fontSize: 13, color: "#E8A030",
         textDecoration: "none", opacity: 0.7,
