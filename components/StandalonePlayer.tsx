@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import type { Tape } from "@/lib/types";
+import { decodeTape } from "@/lib/share";
 import Waveform from "@/components/ui/Waveform";
 import { FlipCassette } from "@/components/cassette";
 import { ICON } from "@/components/ui/icons";
@@ -19,6 +20,16 @@ export default function StandalonePlayer() {
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
+    // 1) Try the tape encoded in the URL (works on any device)
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const t = params.get("t");
+      if (t) {
+        const decoded = decodeTape(t);
+        if (decoded) { setTape(decoded); return; }
+      }
+    } catch {}
+    // 2) Fallback: same-device localStorage copy
     try {
       const raw = localStorage.getItem("cz_share_tape");
       if (raw) setTape(JSON.parse(raw));
