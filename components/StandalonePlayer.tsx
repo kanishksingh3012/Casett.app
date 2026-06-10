@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
 import type { Tape } from "@/lib/types";
 import Waveform from "@/components/ui/Waveform";
 import { FlipCassette } from "@/components/cassette";
@@ -91,9 +92,9 @@ export default function StandalonePlayer() {
       }}>
         <div style={{ fontSize: 32 }}>📼</div>
         <div style={{ fontSize: 15 }}>No tape found.</div>
-        <a href="/" style={{ fontSize: 13, color: "#E8A030", textDecoration: "none" }}>
+        <Link href="/" style={{ fontSize: 13, color: "#E8A030", textDecoration: "none" }}>
           ← Make your own
-        </a>
+        </Link>
       </div>
     );
   }
@@ -165,12 +166,12 @@ export default function StandalonePlayer() {
       </div>
 
       {/* back link */}
-      <a href="/" style={{
+      <Link href="/" style={{
         marginTop: 32, fontSize: 13, color: "#E8A030",
         textDecoration: "none", opacity: 0.7,
       }}>
         Make your own ↗
-      </a>
+      </Link>
     </div>
   );
 }
