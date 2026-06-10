@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Tape } from "@/lib/types";
+import { encodeTape } from "@/lib/share";
 import StatusBar from "@/components/ui/StatusBar";
 import TopBar from "@/components/ui/TopBar";
 import Cassette from "@/components/cassette";
@@ -16,32 +17,38 @@ interface ShareScreenProps {
 export default function ShareScreen({ tape, onBack, onDone }: ShareScreenProps) {
   const [copied, setCopied] = useState(false);
 
-  const slug =
+  // Full self-contained link — tape data lives in the URL, so it opens on any device.
+  const playUrl = typeof window !== "undefined"
+    ? `${window.location.origin}/play?t=${encodeTape(tape)}`
+    : "/play";
+
+  const displaySlug =
     (tape.title
       ? tape.title.toLowerCase().replace(/[^a-z]/g, "").slice(0, 4)
       : "9x4k") + "k";
 
-  const playUrl = typeof window !== "undefined"
-    ? `${window.location.origin}/play`
-    : "/play";
-
-  const storeTape = () => {
-    try { localStorage.setItem("cz_share_tape", JSON.stringify(tape)); } catch {}
-  };
-
-  const handleShare = () => {
-    storeTape();
-    navigator.clipboard?.writeText(playUrl).catch(() => {});
+  const copyLink = async () => {
+    try { await navigator.clipboard?.writeText(playUrl); } catch {}
     setCopied(true);
     setTimeout(() => setCopied(false), 1400);
-    window.open(playUrl, "_blank");
   };
 
-  const handleCopy = () => {
-    storeTape();
-    navigator.clipboard?.writeText(playUrl).catch(() => {});
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1400);
+  const handleShare = async () => {
+    // Native share sheet (iOS / Android / macOS) when available
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({
+          title: tape.title || "A tape for you",
+          text: `${tape.from || "Someone"} made you a tape 📼`,
+          url: playUrl,
+        });
+        return;
+      } catch {
+        // user cancelled or share failed — fall through to copy
+      }
+    }
+    // Fallback: copy link to clipboard
+    copyLink();
   };
 
   return (
@@ -55,8 +62,8 @@ export default function ShareScreen({ tape, onBack, onDone }: ShareScreenProps) 
         </div>
         <div className="share-sub">your tape is ready ✦</div>
         <div className="link-pill">
-          <span>casett.app/t/{slug}</span>
-          <button onClick={handleCopy}>
+          <span>casett.app/t/{displaySlug}</span>
+          <button onClick={copyLink}>
             {copied ? ICON.check : ICON.copy}
           </button>
         </div>
@@ -70,7 +77,7 @@ export default function ShareScreen({ tape, onBack, onDone }: ShareScreenProps) 
           </button>
         </div>
         <div className="share-foot">
-          opens a web player — no app needed on their end
+          {copied ? "link copied ✓" : "opens a web player — no app needed on their end"}
         </div>
       </div>
     </div>
