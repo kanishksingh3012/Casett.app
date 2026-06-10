@@ -9,6 +9,7 @@ import LCD from "@/components/ui/LCD";
 import Waveform from "@/components/ui/Waveform";
 import Cassette from "@/components/cassette";
 import { ICON } from "@/components/ui/icons";
+import { uploadVoiceBlob } from "@/lib/tapeStore";
 
 interface RecordScreenProps {
   tape: Tape;
@@ -32,6 +33,7 @@ export default function RecordScreen({ tape, set, onBack, onNext }: RecordScreen
   const chunksRef = useRef<Blob[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const blobUrlRef = useRef<string>(tape.voiceUrl || "");
+  const publicUrlRef = useRef<string>(tape.voiceUrl?.startsWith("http") ? tape.voiceUrl : "");
 
   useEffect(() => {
     return () => {
@@ -55,12 +57,18 @@ export default function RecordScreen({ tape, set, onBack, onNext }: RecordScreen
 
       mr.onstop = () => {
         stream.getTracks().forEach((tr) => tr.stop());
-        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
-        if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current);
+        const mimeType = chunksRef.current[0]?.type || "audio/webm";
+        const blob = new Blob(chunksRef.current, { type: mimeType });
+        if (blobUrlRef.current.startsWith("blob:")) URL.revokeObjectURL(blobUrlRef.current);
         blobUrlRef.current = URL.createObjectURL(blob);
+        publicUrlRef.current = "";
         audioRef.current = null;
         setDone(true);
         setRec(false);
+        // Upload blob directly — avoids iOS Safari blob: re-fetch restriction
+        uploadVoiceBlob(blob)
+          .then((url) => { publicUrlRef.current = url; })
+          .catch(() => { /* will fall back to blobUrlRef at proceed() */ });
       };
 
       mr.start();
@@ -100,6 +108,7 @@ export default function RecordScreen({ tape, set, onBack, onNext }: RecordScreen
       audioRef.current.pause();
       audioRef.current = null;
     }
+    publicUrlRef.current = "";
     setDone(false);
     setRec(false);
     setT(0);
@@ -123,7 +132,8 @@ export default function RecordScreen({ tape, set, onBack, onNext }: RecordScreen
   };
 
   const proceed = () => {
-    set({ hasVoice: done, voiceLen: t, voiceUrl: blobUrlRef.current || undefined });
+    const voiceUrl = publicUrlRef.current || blobUrlRef.current || undefined;
+    set({ hasVoice: done, voiceLen: t, voiceUrl });
     onNext();
   };
 

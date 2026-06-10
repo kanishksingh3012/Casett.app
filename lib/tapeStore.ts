@@ -1,11 +1,9 @@
 import type { Tape } from "./types";
 import { supabase } from "./supabase";
 
-async function uploadVoice(blobUrl: string): Promise<string> {
+export async function uploadVoiceBlob(blob: Blob): Promise<string> {
   if (!supabase) throw new Error("Supabase not configured");
-  const res = await fetch(blobUrl);
-  const blob = await res.blob();
-  const ext = blob.type.includes("ogg") ? "ogg" : "webm";
+  const ext = blob.type.includes("ogg") ? "ogg" : blob.type.includes("mp4") ? "m4a" : "webm";
   const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
   const { error } = await supabase.storage
     .from("voices")
@@ -19,8 +17,16 @@ export async function saveTape(tape: Tape): Promise<string> {
   if (!supabase) throw new Error("Supabase not configured");
 
   let voiceUrl = tape.voiceUrl;
+  // blob: URLs would fail on iOS Safari — RecordScreen should upload before reaching here
+  // but if somehow a blob URL slips through on desktop, handle it gracefully
   if (voiceUrl?.startsWith("blob:")) {
-    voiceUrl = await uploadVoice(voiceUrl);
+    try {
+      const res = await fetch(voiceUrl);
+      const blob = await res.blob();
+      voiceUrl = await uploadVoiceBlob(blob);
+    } catch {
+      voiceUrl = undefined;
+    }
   }
 
   const { data, error } = await supabase
