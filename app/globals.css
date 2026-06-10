@@ -234,6 +234,12 @@ button {
 .lcd .rd.on { background: var(--rec); box-shadow: 0 0 8px var(--rec); animation: blink 1s infinite; }
 @keyframes blink { 50% { opacity: .3; } }
 @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+.share-spinner {
+  width: 14px; height: 14px; border-radius: 50%; display: inline-block;
+  border: 2px solid rgba(28,18,9,.2); border-top-color: rgba(28,18,9,.8);
+  animation: cta-spin 0.7s linear infinite;
+}
+@keyframes cta-spin { to { transform: rotate(360deg); } }
 .lcd .meta { font-family: var(--font-mono); font-size: 9px; letter-spacing: .18em; color: rgba(127,224,168,.4); }
 
 /* waveform */
