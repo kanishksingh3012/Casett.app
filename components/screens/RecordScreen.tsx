@@ -26,6 +26,7 @@ export default function RecordScreen({ tape, set, onBack, onNext }: RecordScreen
   const [done, setDone] = useState(tape.hasVoice && !!tape.voiceUrl);
   const [t, setT] = useState(tape.voiceLen || 0);
   const [playing, setPlaying] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [err, setErr] = useState("");
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -34,6 +35,7 @@ export default function RecordScreen({ tape, set, onBack, onNext }: RecordScreen
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const blobUrlRef = useRef<string>(tape.voiceUrl || "");
   const publicUrlRef = useRef<string>(tape.voiceUrl?.startsWith("http") ? tape.voiceUrl : "");
+  const uploadPromiseRef = useRef<Promise<void> | null>(null);
 
   useEffect(() => {
     return () => {
@@ -66,9 +68,11 @@ export default function RecordScreen({ tape, set, onBack, onNext }: RecordScreen
         setDone(true);
         setRec(false);
         // Upload blob directly — avoids iOS Safari blob: re-fetch restriction
-        uploadVoiceBlob(blob)
+        setUploading(true);
+        uploadPromiseRef.current = uploadVoiceBlob(blob)
           .then((url) => { publicUrlRef.current = url; })
-          .catch(() => { /* will fall back to blobUrlRef at proceed() */ });
+          .catch(() => {})
+          .finally(() => setUploading(false));
       };
 
       mr.start();
@@ -109,6 +113,8 @@ export default function RecordScreen({ tape, set, onBack, onNext }: RecordScreen
       audioRef.current = null;
     }
     publicUrlRef.current = "";
+    uploadPromiseRef.current = null;
+    setUploading(false);
     setDone(false);
     setRec(false);
     setT(0);
@@ -131,7 +137,9 @@ export default function RecordScreen({ tape, set, onBack, onNext }: RecordScreen
     }
   };
 
-  const proceed = () => {
+  const proceed = async () => {
+    // Wait for background upload to finish before saving — avoids blob: URL being stored
+    if (uploadPromiseRef.current) await uploadPromiseRef.current;
     const voiceUrl = publicUrlRef.current || blobUrlRef.current || undefined;
     set({ hasVoice: done, voiceLen: t, voiceUrl });
     onNext();
@@ -187,7 +195,11 @@ export default function RecordScreen({ tape, set, onBack, onNext }: RecordScreen
       </div>
       <div className="screen-foot">
         <button className="cta" disabled={!done} onClick={proceed}>
-          Next · Add a song
+          {uploading ? (
+            <><span className="share-spinner" /> Uploading…</>
+          ) : (
+            "Next · Add a song"
+          )}
         </button>
         <button
           className="link-btn"
