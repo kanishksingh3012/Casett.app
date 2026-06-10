@@ -10,11 +10,10 @@ import { ICON } from "@/components/ui/icons";
 interface ShareScreenProps {
   tape: Tape;
   onBack: () => void;
-  onSave: () => void;
-  onPreview: () => void;
+  onDone: () => void;
 }
 
-export default function ShareScreen({ tape, onBack, onSave }: Omit<ShareScreenProps, "onPreview">) {
+export default function ShareScreen({ tape, onBack, onDone }: ShareScreenProps) {
   const [copied, setCopied] = useState(false);
 
   const slug =
@@ -66,8 +65,8 @@ export default function ShareScreen({ tape, onBack, onSave }: Omit<ShareScreenPr
             {ICON.share}
             <span>Share link</span>
           </button>
-          <button className="gbtn" onClick={onSave}>
-            Save to Library
+          <button className="gbtn" onClick={onDone}>
+            Make another tape
           </button>
         </div>
         <div className="share-foot">
